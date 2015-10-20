@@ -11,10 +11,15 @@
         "psr-7",
         "zf2"
     ],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    },
     "require": {
         "php": ">=5.5",
         "container-interop/container-interop": "^1.1",
-        "zendframework/zend-expressive": "^0.5",
+        "zendframework/zend-expressive": "^1.0@rc",
         "zendframework/zend-filter": "^2.5",
         "zendframework/zend-i18n": "^2.5",
         "zendframework/zend-servicemanager": "^2.5",
