@@ -56,11 +56,6 @@ class ZendViewRenderer implements TemplateRendererInterface
      * Allows specifying the renderer to use (any zend-view renderer is
      * allowed), and optionally also the layout.
      *
-     * The layout may be:
-     *
-     * - a string layout name
-     * - a ModelInterface instance representing the layout
-     *
      * If no renderer is provided, a default PhpRenderer instance is created;
      * omitting the layout indicates no layout should be used by default when
      * rendering.
@@ -85,6 +80,24 @@ class ZendViewRenderer implements TemplateRendererInterface
             }
         }
 
+        $this->renderer = $renderer;
+        $this->resolver = $this->getNamespacedResolver($resolver);
+        $this->setLayout($layout);
+    }
+
+    /**
+     * Set layout
+     *
+     * The layout may be:
+     *
+     * - a string layout name
+     * - a ModelInterface instance representing the layout
+     * - null, to disable layout
+     *
+     * @param string|ModelInterface|null $layout
+     */
+    public function setLayout($layout = null)
+    {
         if ($layout && is_string($layout)) {
             $model = new ViewModel();
             $model->setTemplate($layout);
@@ -92,16 +105,16 @@ class ZendViewRenderer implements TemplateRendererInterface
         }
 
         if ($layout !== null && ! $layout instanceof ModelInterface) {
-            throw new Exception\InvalidArgumentException(sprintf(
-                'Layout must be a string layout template name or a %s instance; received %s',
-                ModelInterface::class,
-                (is_object($layout) ? get_class($layout) : gettype($layout))
-            ));
+            throw new Exception\InvalidArgumentException(
+                sprintf(
+                    'Layout must be a string layout template name or a %s instance; received %s',
+                    ModelInterface::class,
+                    (is_object($layout) ? get_class($layout) : gettype($layout))
+                )
+            );
         }
 
-        $this->renderer = $renderer;
-        $this->resolver = $this->getNamespacedResolver($resolver);
-        $this->layout   = $layout;
+        $this->layout = $layout;
     }
 
     /**
@@ -124,10 +137,21 @@ class ZendViewRenderer implements TemplateRendererInterface
     public function render($name, $params = [])
     {
         $params = $this->mergeParams($name, $this->normalizeParams($params));
-        return $this->renderModel(
-            $this->createModel($name, $params),
-            $this->renderer
-        );
+        $model = new ViewModel($params);
+        $model->setTemplate($name);
+
+        return $this->renderModelTree($this->wrapModel($model, $params));
+    }
+
+    /**
+     * Render ViewModel directly, wrapping it in layout (if specified in constructor)
+     *
+     * @param ModelInterface $model
+     * @return string
+     */
+    public function renderViewModel(ModelInterface $model)
+    {
+        return $this->renderModelTree($this->wrapModel($model));
     }
 
     /**
@@ -167,9 +191,7 @@ class ZendViewRenderer implements TemplateRendererInterface
     }
 
     /**
-     * Create a view model from the template and parameters.
-     *
-     * Injects the created model in the layout view model, if present.
+     * Wrap view model inside layout (if available)
      *
      * If the $params contains a non-empty 'layout' key, that value will
      * be used to seed a layout view model, if:
@@ -180,11 +202,11 @@ class ZendViewRenderer implements TemplateRendererInterface
      * If a layout is discovered in this way, it will override the one set in
      * the constructor, if any.
      *
-     * @param string $name
+     * @param ModelInterface $model
      * @param array $params
-     * @return ModelInterface
+     * @return null|ModelInterface|ViewModel
      */
-    private function createModel($name, array $params)
+    private function wrapModel(ModelInterface $model, array $params = [])
     {
         $layout = $this->layout ? clone $this->layout : null;
         if (array_key_exists('layout', $params) && $params['layout']) {
@@ -198,9 +220,6 @@ class ZendViewRenderer implements TemplateRendererInterface
             }
         }
 
-        $model = new ViewModel($params);
-        $model->setTemplate($name);
-
         if ($layout) {
             $layout->addChild($model);
             $model = $layout;
@@ -212,14 +231,14 @@ class ZendViewRenderer implements TemplateRendererInterface
     /**
      * Do a recursive, depth-first rendering of a view model.
      *
-     * @param ModelInterface $model
-     * @param RendererInterface $renderer
+     * @param ModelInterface $root
      * @return string
      * @throws Exception\RenderingException if it encounters a terminal child.
      */
-    private function renderModel(ModelInterface $model, RendererInterface $renderer)
+    private function renderModelTree(ModelInterface $root)
     {
-        foreach ($model as $child) {
+        foreach ($root as $child) {
+            /** @var ModelInterface $child */
             if ($child->terminate()) {
                 throw new Exception\RenderingException('Cannot render; encountered a child marked terminal');
             }
@@ -229,18 +248,18 @@ class ZendViewRenderer implements TemplateRendererInterface
                 continue;
             }
 
-            $result = $this->renderModel($child, $renderer);
+            $result = $this->renderModelTree($child);
 
             if ($child->isAppend()) {
-                $oldResult = $model->{$capture};
-                $model->setVariable($capture, $oldResult . $result);
+                $oldResult = $root->{$capture};
+                $root->setVariable($capture, $oldResult . $result);
                 continue;
             }
 
-            $model->setVariable($capture, $result);
+            $root->setVariable($capture, $result);
         }
 
-        return $renderer->render($model);
+        return $this->renderer->render($root);
     }
 
     /**

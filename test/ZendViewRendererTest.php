@@ -17,6 +17,8 @@ use Zend\Expressive\Template\TemplatePath;
 use Zend\Expressive\ZendView\ZendViewRenderer;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
+use Zend\View\Renderer\RendererInterface;
+use Zend\View\Resolver\ResolverInterface;
 use Zend\View\Resolver\TemplatePathStack;
 
 class ZendViewRendererTest extends TestCase
@@ -349,5 +351,15 @@ class ZendViewRendererTest extends TestCase
         $content = file_get_contents(__DIR__ . '/TestAsset/zendview.phtml');
         $content = str_replace('<?php echo $name ?>', $name2, $content);
         $this->assertEquals($content, $result);
+    }
+
+    public function testCanRenderViewModelDirectly()
+    {
+        $model = new ViewModel();
+        $zendView = $this->prophesize(PhpRenderer::class);
+        $zendView->render($model)->willReturn('rendered!')->shouldBeCalled();
+        $zendView->resolver()->willReturn($this->prophesize(ResolverInterface::class)->reveal());
+        $renderer = new ZendViewRenderer($zendView->reveal());
+        $this->assertEquals('rendered!', $renderer->renderViewModel($model));
     }
 }
