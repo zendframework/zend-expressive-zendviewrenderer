@@ -124,10 +124,7 @@ class ZendViewRenderer implements TemplateRendererInterface
     public function render($name, $params = [])
     {
         $params = $this->mergeParams($name, $this->normalizeParams($params));
-        return $this->renderModel(
-            $this->createModel($name, $params),
-            $this->renderer
-        );
+        return $this->renderModel($this->createModel($name, $params));
     }
 
     /**
@@ -213,11 +210,10 @@ class ZendViewRenderer implements TemplateRendererInterface
      * Do a recursive, depth-first rendering of a view model.
      *
      * @param ModelInterface $model
-     * @param RendererInterface $renderer
      * @return string
      * @throws Exception\RenderingException if it encounters a terminal child.
      */
-    private function renderModel(ModelInterface $model, RendererInterface $renderer)
+    private function renderModel(ModelInterface $model)
     {
         foreach ($model as $child) {
             if ($child->terminate()) {
@@ -229,7 +225,7 @@ class ZendViewRenderer implements TemplateRendererInterface
                 continue;
             }
 
-            $result = $this->renderModel($child, $renderer);
+            $result = $this->renderModel($child);
 
             if ($child->isAppend()) {
                 $oldResult = $model->{$capture};
@@ -240,7 +236,7 @@ class ZendViewRenderer implements TemplateRendererInterface
             $model->setVariable($capture, $result);
         }
 
-        return $renderer->render($model);
+        return $this->renderer->render($model);
     }
 
     /**
