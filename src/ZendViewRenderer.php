@@ -124,7 +124,10 @@ class ZendViewRenderer implements TemplateRendererInterface
     public function render($name, $params = [])
     {
         $params = $this->mergeParams($name, $this->normalizeParams($params));
-        return $this->renderModel($this->createModel($name, $params));
+        $model = new ViewModel($params);
+        $model->setTemplate($name);
+
+        return $this->renderModelTree($this->wrapModel($model, $params));
     }
 
     /**
@@ -164,9 +167,7 @@ class ZendViewRenderer implements TemplateRendererInterface
     }
 
     /**
-     * Create a view model from the template and parameters.
-     *
-     * Injects the created model in the layout view model, if present.
+     * Wrap view model inside layout (if available)
      *
      * If the $params contains a non-empty 'layout' key, that value will
      * be used to seed a layout view model, if:
@@ -177,11 +178,11 @@ class ZendViewRenderer implements TemplateRendererInterface
      * If a layout is discovered in this way, it will override the one set in
      * the constructor, if any.
      *
-     * @param string $name
+     * @param ModelInterface $model
      * @param array $params
-     * @return ModelInterface
+     * @return null|ModelInterface|ViewModel
      */
-    private function createModel($name, array $params)
+    private function wrapModel(ModelInterface $model, array $params)
     {
         $layout = $this->layout ? clone $this->layout : null;
         if (array_key_exists('layout', $params) && $params['layout']) {
@@ -195,9 +196,6 @@ class ZendViewRenderer implements TemplateRendererInterface
             }
         }
 
-        $model = new ViewModel($params);
-        $model->setTemplate($name);
-
         if ($layout) {
             $layout->addChild($model);
             $model = $layout;
@@ -209,13 +207,14 @@ class ZendViewRenderer implements TemplateRendererInterface
     /**
      * Do a recursive, depth-first rendering of a view model.
      *
-     * @param ModelInterface $model
+     * @param ModelInterface $root
      * @return string
      * @throws Exception\RenderingException if it encounters a terminal child.
      */
-    private function renderModel(ModelInterface $model)
+    private function renderModelTree(ModelInterface $root)
     {
-        foreach ($model as $child) {
+        foreach ($root as $child) {
+            /** @var ModelInterface $child */
             if ($child->terminate()) {
                 throw new Exception\RenderingException('Cannot render; encountered a child marked terminal');
             }
@@ -225,18 +224,18 @@ class ZendViewRenderer implements TemplateRendererInterface
                 continue;
             }
 
-            $result = $this->renderModel($child);
+            $result = $this->renderModelTree($child);
 
             if ($child->isAppend()) {
-                $oldResult = $model->{$capture};
-                $model->setVariable($capture, $oldResult . $result);
+                $oldResult = $root->{$capture};
+                $root->setVariable($capture, $oldResult . $result);
                 continue;
             }
 
-            $model->setVariable($capture, $result);
+            $root->setVariable($capture, $result);
         }
 
-        return $this->renderer->render($model);
+        return $this->renderer->render($root);
     }
 
     /**
