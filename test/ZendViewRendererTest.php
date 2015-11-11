@@ -376,5 +376,6 @@ class ZendViewRendererTest extends TestCase
 
         $content = file_get_contents(__DIR__ . '/TestAsset/zendview.phtml');
         $content = str_replace('<?php echo $name ?>', 'Zend', $content);
+        $this->assertEquals($content, $result);
     }
 }
