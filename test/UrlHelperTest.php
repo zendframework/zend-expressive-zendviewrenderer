@@ -89,4 +89,49 @@ class UrlHelperTest extends TestCase
         $helper = $this->createHelper();
         $this->assertEquals('URL', $helper('foo', ['bar' => 'baz']));
     }
+
+    public function testIfRouteResultRouteNameDoesNotMatchRequestedNameItWillNotMergeParamsToGenerateUri()
+    {
+        $result = $this->prophesize(RouteResult::class);
+        $result->isFailure()->willReturn(false);
+        $result->getMatchedRouteName()->willReturn('not-resource');
+        $result->getMatchedParams()->shouldNotBeCalled();
+
+        $this->router->generateUri('resource', [])->willReturn('URL');
+
+        $helper = $this->createHelper();
+        $helper->setRouteResult($result->reveal());
+
+        $this->assertEquals('URL', $helper('resource'));
+    }
+
+    public function testMergesRouteResultParamsWithProvidedParametersToGenerateUri()
+    {
+        $result = $this->prophesize(RouteResult::class);
+        $result->isFailure()->willReturn(false);
+        $result->getMatchedRouteName()->willReturn('resource');
+        $result->getMatchedParams()->willReturn(['id' => 1]);
+
+        $this->router->generateUri('resource', ['id' => 1, 'version' => 2])->willReturn('URL');
+
+        $helper = $this->createHelper();
+        $helper->setRouteResult($result->reveal());
+
+        $this->assertEquals('URL', $helper('resource', ['version' => 2]));
+    }
+
+    public function testProvidedParametersOverrideAnyPresentInARouteResultWhenGeneratingUri()
+    {
+        $result = $this->prophesize(RouteResult::class);
+        $result->isFailure()->willReturn(false);
+        $result->getMatchedRouteName()->willReturn('resource');
+        $result->getMatchedParams()->willReturn(['id' => 1]);
+
+        $this->router->generateUri('resource', ['id' => 2])->willReturn('URL');
+
+        $helper = $this->createHelper();
+        $helper->setRouteResult($result->reveal());
+
+        $this->assertEquals('URL', $helper('resource', ['id' => 2]));
+    }
 }
