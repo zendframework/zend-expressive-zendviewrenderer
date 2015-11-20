@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 0.3.0 - TBD
+
+### Added
+
+- [4](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/)
+  Allow rendering view models via render
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 0.2.0 - 2015-10-20
 
 ### Added
