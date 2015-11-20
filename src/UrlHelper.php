@@ -55,6 +55,10 @@ class UrlHelper extends AbstractHelper
             return $this->generateUriFromResult($params);
         }
 
+        if ($this->result) {
+            $params = $this->mergeParams($route, $params);
+        }
+
         return $this->router->generateUri($route, $params);
     }
 
@@ -83,5 +87,40 @@ class UrlHelper extends AbstractHelper
         $name   = $this->result->getMatchedRouteName();
         $params = array_merge($this->result->getMatchedParams(), $params);
         return $this->router->generateUri($name, $params);
+    }
+
+    /**
+     * Merge route result params and provided parameters.
+     *
+     * If $params is not an array, returns them verbatim.
+     *
+     * If the route result represents a routing failure, returns the params
+     * verbatim.
+     *
+     * If the route result does not represent the same route name requested,
+     * returns the params verbatim.
+     *
+     * Otherwise, merges the route result params with those provided at
+     * invocation, with the latter having precedence.
+     *
+     * @param string $route Route name.
+     * @param array $params Parameters provided at invocation.
+     * @return array
+     */
+    private function mergeParams($route, $params)
+    {
+        if (! is_array($params)) {
+            return $params;
+        }
+
+        if ($this->result->isFailure()) {
+            return $params;
+        }
+
+        if ($this->result->getMatchedRouteName() !== $route) {
+            return $params;
+        }
+
+        return array_merge($this->result->getMatchedParams(), $params);
     }
 }
