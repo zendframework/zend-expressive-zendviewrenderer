@@ -338,16 +338,44 @@ class ZendViewRendererTest extends TestCase
         $this->assertEquals($content, $result);
     }
 
-    public function testOverrideSharedParametersAtRender()
+    public function useArrayOrViewModel()
+    {
+        return [
+            'array'      => [false],
+            'view-model' => [true],
+        ];
+    }
+
+    /**
+     * @dataProvider useArrayOrViewModel
+     */
+    public function testOverrideSharedParametersAtRender($viewAsModel)
     {
         $renderer = new ZendViewRenderer();
         $renderer->addPath(__DIR__ . '/TestAsset');
         $name = 'Zend';
         $name2 = 'View';
         $renderer->addDefaultParam($renderer::TEMPLATE_ALL, 'name', $name);
-        $result = $renderer->render('zendview', ['name' => $name2]);
+
+        $viewModel = ['name' => $name2];
+        $viewModel = $viewAsModel ? new ViewModel($viewModel) : $viewModel;
+
+        $result = $renderer->render('zendview', $viewModel);
         $content = file_get_contents(__DIR__ . '/TestAsset/zendview.phtml');
         $content = str_replace('<?php echo $name ?>', $name2, $content);
+        $this->assertEquals($content, $result);
+    }
+
+    public function testWillRenderAViewModel()
+    {
+        $renderer = new ZendViewRenderer();
+        $renderer->addPath(__DIR__ . '/TestAsset');
+
+        $viewModel = new ViewModel(['name' => 'Zend']);
+        $result = $renderer->render('zendview', $viewModel);
+
+        $content = file_get_contents(__DIR__ . '/TestAsset/zendview.phtml');
+        $content = str_replace('<?php echo $name ?>', 'Zend', $content);
         $this->assertEquals($content, $result);
     }
 }

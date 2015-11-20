@@ -109,7 +109,7 @@ class ZendViewRenderer implements TemplateRendererInterface
      *
      * If a layout was specified during construction, it will be used;
      * alternately, you can specify a layout to use via the "layout"
-     * parameter, using either:
+     * parameter/variable, using either:
      *
      * - a string layout template name
      * - a Zend\View\Model\ModelInterface instance
@@ -118,16 +118,18 @@ class ZendViewRenderer implements TemplateRendererInterface
      * the constructor.
      *
      * @param string $name
-     * @param array|object $params
+     * @param array|ModelInterface|object $params
      * @return string
      */
     public function render($name, $params = [])
     {
-        $params = $this->mergeParams($name, $this->normalizeParams($params));
-        return $this->renderModel(
-            $this->createModel($name, $params),
-            $this->renderer
-        );
+        $viewModel = ($params instanceof ModelInterface)
+            ? $this->mergeViewModel($name, $params)
+            : $this->createModel($name, $params);
+
+        $viewModel = $this->prepareLayout($viewModel);
+
+        return $this->renderModel($viewModel, $this->renderer);
     }
 
     /**
@@ -169,43 +171,15 @@ class ZendViewRenderer implements TemplateRendererInterface
     /**
      * Create a view model from the template and parameters.
      *
-     * Injects the created model in the layout view model, if present.
-     *
-     * If the $params contains a non-empty 'layout' key, that value will
-     * be used to seed a layout view model, if:
-     *
-     * - it is a string layout template name
-     * - it is a ModelInterface instance
-     *
-     * If a layout is discovered in this way, it will override the one set in
-     * the constructor, if any.
-     *
      * @param string $name
-     * @param array $params
+     * @param mixed $params
      * @return ModelInterface
      */
-    private function createModel($name, array $params)
+    private function createModel($name, $params)
     {
-        $layout = $this->layout ? clone $this->layout : null;
-        if (array_key_exists('layout', $params) && $params['layout']) {
-            if (is_string($params['layout'])) {
-                $layout = new ViewModel();
-                $layout->setTemplate($params['layout']);
-                unset($params['layout']);
-            } elseif ($params['layout'] instanceof ModelInterface) {
-                $layout = $params['layout'];
-                unset($params['layout']);
-            }
-        }
-
-        $model = new ViewModel($params);
+        $params = $this->mergeParams($name, $this->normalizeParams($params));
+        $model  = new ViewModel($params);
         $model->setTemplate($name);
-
-        if ($layout) {
-            $layout->addChild($model);
-            $model = $layout;
-        }
-
         return $model;
     }
 
@@ -305,5 +279,63 @@ class ZendViewRenderer implements TemplateRendererInterface
                 return $resolver;
             }
         }
+    }
+
+    /**
+     * Merge global/template parameters with provided view model.
+     *
+     * @param string $name Template name.
+     * @param ModelInterface $model
+     * @return ModelInterface
+     */
+    private function mergeViewModel($name, ModelInterface $model)
+    {
+        $params = $this->mergeParams($name, $model->getVariables());
+        $model->setVariables($params);
+        $model->setTemplate($name);
+        return $model;
+    }
+
+    /**
+     * Prepare the layout, if any.
+     *
+     * Injects the view model in the layout view model, if present.
+     *
+     * If the view model contains a non-empty 'layout' variable, that value
+     * will be used to seed a layout view model, if:
+     *
+     * - it is a string layout template name
+     * - it is a ModelInterface instance
+     *
+     * If a layout is discovered in this way, it will override the one set in
+     * the constructor, if any.
+     *
+     * Returns the provided $viewModel unchanged if no layout is discovered;
+     * otherwise, a view model representing the layout, with the provided
+     * view model as a child, is returned.
+     *
+     * @param ModelInterface $viewModel
+     * @return ModelInterface
+     */
+    private function prepareLayout(ModelInterface $viewModel)
+    {
+        $layout = $this->layout ? clone $this->layout : null;
+
+        $providedLayout = $viewModel->getVariable('layout', false);
+        if (is_string($providedLayout) && ! empty($providedLayout)) {
+            $layout = new ViewModel();
+            $layout->setTemplate($providedLayout);
+            $viewModel->setVariable('layout', null);
+        } elseif ($providedLayout instanceof ModelInterface) {
+            $layout = $providedLayout;
+            $viewModel->setVariable('layout', null);
+        }
+
+        if ($layout) {
+            $layout->addChild($viewModel);
+            $viewModel = $layout;
+        }
+
+        return $viewModel;
     }
 }
