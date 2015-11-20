@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- [4](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/)
+- [#4](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/)
   Allow rendering view models via render
 
 ### Deprecated
@@ -19,7 +19,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#6](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/6)
+  Merge route result params with those provided
 
 ## 0.2.0 - 2015-10-20
 
