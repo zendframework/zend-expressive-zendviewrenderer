@@ -99,8 +99,8 @@ class ZendViewRendererTest extends TestCase
         $paths = $renderer->getPaths();
         $this->assertInternalType('array', $paths);
         $this->assertEquals(1, count($paths));
-        $this->assertTemplatePath(__DIR__ . '/TestAsset/', $paths[0]);
-        $this->assertTemplatePathString(__DIR__ . '/TestAsset/', $paths[0]);
+        $this->assertTemplatePath(__DIR__ . '/TestAsset' . DIRECTORY_SEPARATOR, $paths[0]);
+        $this->assertTemplatePathString(__DIR__ . '/TestAsset' . DIRECTORY_SEPARATOR, $paths[0]);
         $this->assertEmptyTemplatePathNamespace($paths[0]);
     }
 
@@ -111,8 +111,8 @@ class ZendViewRendererTest extends TestCase
         $paths = $renderer->getPaths();
         $this->assertInternalType('array', $paths);
         $this->assertEquals(1, count($paths));
-        $this->assertTemplatePath(__DIR__ . '/TestAsset/', $paths[0]);
-        $this->assertTemplatePathString(__DIR__ . '/TestAsset/', $paths[0]);
+        $this->assertTemplatePath(__DIR__ . '/TestAsset' . DIRECTORY_SEPARATOR, $paths[0]);
+        $this->assertTemplatePathString(__DIR__ . '/TestAsset' . DIRECTORY_SEPARATOR, $paths[0]);
         $this->assertTemplatePathNamespace('test', $paths[0]);
     }
 
