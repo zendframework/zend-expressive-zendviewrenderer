@@ -14,6 +14,7 @@ use PHPUnit_Framework_TestCase as TestCase;
 use Zend\Expressive\Exception;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Router\RouteResult;
+use Zend\Expressive\Router\RouteResultObserverInterface;
 use Zend\Expressive\ZendView\UrlHelper;
 
 class UrlHelperTest extends TestCase
@@ -133,5 +134,19 @@ class UrlHelperTest extends TestCase
         $helper->setRouteResult($result->reveal());
 
         $this->assertEquals('URL', $helper('resource', ['id' => 2]));
+    }
+
+    public function testIsARouteResultObserver()
+    {
+        $helper = $this->createHelper();
+        $this->assertInstanceOf(RouteResultObserverInterface::class, $helper);
+    }
+
+    public function testUpdateMethodSetsRouteResultProperty()
+    {
+        $result = $this->prophesize(RouteResult::class);
+        $helper = $this->createHelper();
+        $helper->update($result->reveal());
+        $this->assertAttributeSame($result->reveal(), 'result', $helper);
     }
 }

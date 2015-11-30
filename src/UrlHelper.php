@@ -10,9 +10,10 @@ namespace Zend\Expressive\ZendView;
 use Zend\Expressive\Exception;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Router\RouteResult;
+use Zend\Expressive\Router\RouteResultObserverInterface;
 use Zend\View\Helper\AbstractHelper;
 
-class UrlHelper extends AbstractHelper
+class UrlHelper extends AbstractHelper implements RouteResultObserverInterface
 {
     /**
      * @var RouteResult
@@ -60,6 +61,14 @@ class UrlHelper extends AbstractHelper
         }
 
         return $this->router->generateUri($route, $params);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function update(RouteResult $result)
+    {
+        $this->result = $result;
     }
 
     /**
