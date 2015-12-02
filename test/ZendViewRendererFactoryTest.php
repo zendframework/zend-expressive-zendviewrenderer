@@ -213,6 +213,7 @@ class ZendViewRendererFactoryTest extends TestCase
         $router = $this->prophesize(RouterInterface::class)->reveal();
         $this->container->has('config')->willReturn(false);
         $this->container->has(HelperPluginManager::class)->willReturn(false);
+        $this->container->has(UrlHelper::class)->willReturn(false);
         $this->container->has(RouterInterface::class)->willReturn(true);
         $this->container->get(RouterInterface::class)->willReturn($router);
         $factory = new ZendViewRendererFactory();
@@ -234,6 +235,7 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->container->has('config')->willReturn(false);
         $this->container->has(RouterInterface::class)->willReturn(true);
         $this->container->get(RouterInterface::class)->willReturn($router);
+        $this->container->has(UrlHelper::class)->willReturn(false);
 
         $helpers = new HelperPluginManager();
         $this->container->has(HelperPluginManager::class)->willReturn(true);
@@ -256,5 +258,24 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->assertTrue($helpers->has('serverurl'));
         $this->assertInstanceOf(UrlHelper::class, $helpers->get('url'));
         $this->assertInstanceOf(ServerUrlHelper::class, $helpers->get('serverurl'));
+    }
+
+    public function testWillUseUrlHelperFromContainerWhenAvailable()
+    {
+        $urlHelper = $this->prophesize(UrlHelper::class)->reveal();
+        $router = $this->prophesize(RouterInterface::class)->reveal();
+        $this->container->has('config')->willReturn(false);
+        $this->container->has(HelperPluginManager::class)->willReturn(false);
+        $this->container->has(UrlHelper::class)->willReturn(true);
+        $this->container->get(UrlHelper::class)->willReturn($urlHelper);
+        $this->container->has(RouterInterface::class)->willReturn(true);
+        $this->container->get(RouterInterface::class)->willReturn($router);
+        $factory = new ZendViewRendererFactory();
+        $view    = $factory($this->container->reveal());
+
+        $renderer = $this->fetchPhpRenderer($view);
+        $helpers  = $renderer->getHelperPluginManager();
+        $this->assertTrue($helpers->has('url'));
+        $this->assertSame($urlHelper, $helpers->get('url'));
     }
 }

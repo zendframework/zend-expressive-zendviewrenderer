@@ -103,6 +103,9 @@ class ZendViewRendererFactory
             : new HelperPluginManager();
 
         $helpers->setFactory('url', function () use ($container) {
+            if ($container->has(UrlHelper::class)) {
+                return $container->get(UrlHelper::class);
+            }
             return new UrlHelper($container->get(RouterInterface::class));
         });
         $helpers->setInvokableClass('serverurl', ServerUrlHelper::class);
