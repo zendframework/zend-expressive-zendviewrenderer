@@ -11,10 +11,11 @@ namespace ZendTest\Expressive\ZendView;
 
 use ArrayObject;
 use PHPUnit_Framework_TestCase as TestCase;
-use Zend\Expressive\Exception;
+use Zend\Expressive\Router\Exception\RuntimeException;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Router\RouteResult;
 use Zend\Expressive\Router\RouteResultObserverInterface;
+use Zend\Expressive\Template\Exception;
 use Zend\Expressive\ZendView\UrlHelper;
 
 class UrlHelperTest extends TestCase
@@ -48,9 +49,9 @@ class UrlHelperTest extends TestCase
 
     public function testRaisesExceptionOnInvocationIfRouterCannotGenerateUriForRouteProvided()
     {
-        $this->router->generateUri('foo', [])->willThrow(Exception\RuntimeException::class);
+        $this->router->generateUri('foo', [])->willThrow(RuntimeException::class);
         $helper = $this->createHelper();
-        $this->setExpectedException(Exception\RuntimeException::class);
+        $this->setExpectedException(RuntimeException::class);
         $helper('foo');
     }
 

@@ -11,8 +11,7 @@ namespace ZendTest\Expressive\ZendView;
 
 use ArrayObject;
 use PHPUnit_Framework_TestCase as TestCase;
-use Zend\Expressive\Exception;
-use Zend\Expressive\Exception\InvalidArgumentException;
+use Zend\Expressive\Template\Exception\InvalidArgumentException;
 use Zend\Expressive\Template\TemplatePath;
 use Zend\Expressive\ZendView\ZendViewRenderer;
 use Zend\View\Model\ViewModel;
