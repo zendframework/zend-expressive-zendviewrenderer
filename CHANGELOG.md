@@ -8,6 +8,22 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - [#4](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/)
   Allow rendering view models via render
+- [#9](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/)
+  updates `UrlHelper` to implement `Zend\Expressive\Template\RouteResultObserverInterface`,
+  and the `update()` method it defines. This allows it to observer the
+  application for the `RouteResult` and store it for later URI generation.
+  To accomplish this, the following additional changes were made:
+  - `Zend\Expressive\ZendView\UrlHelperFactory`  was added, for creating the
+    `UrlHelper` instance. This should be registered with the application service
+    container.
+  - `Zend\Expressive\ZendView\ZendViewRendererFactory` was updated to look for
+    the `Zend\Expressive\ZendView\UrlHelper` service in the application service
+    container, and use it to seed the `HelperManager` when available.
+  - `Zend\Expressive\ZendView\ApplicationUrlDelegatorFactory` was created; when
+    registered as a delegator factory with the `Zend\Expressive\Application`
+    service, it will pull the `UrlHelper` and attach it as a route result
+    observer to the `Application` instance. Documentation was also provided for
+    creating a Pimple extension for accomplishing this.
 
 ### Deprecated
 
