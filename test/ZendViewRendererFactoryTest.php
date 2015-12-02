@@ -163,12 +163,15 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->assertPathNamespaceCount(2, 'bar', $paths);
         $this->assertPathNamespaceCount(3, null, $paths);
 
-        $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/bar/', 'foo', $paths, var_export($paths, 1));
-        $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/baz/', 'bar', $paths);
-        $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/bat/', 'bar', $paths);
-        $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/one/', null, $paths);
-        $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/two/', null, $paths);
-        $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/three/', null, $paths);
+        $dirSlash = DIRECTORY_SEPARATOR;
+        // @codingStandardsIgnoreStart
+        $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/bar' . $dirSlash, 'foo', $paths, var_export($paths, 1));
+        $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/baz' . $dirSlash, 'bar', $paths);
+        $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/bat' . $dirSlash, 'bar', $paths);
+        $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/one' . $dirSlash, null, $paths);
+        $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/two' . $dirSlash, null, $paths);
+        $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/three' . $dirSlash, null, $paths);
+        // @codingStandardsIgnoreEnd
     }
 
     public function testConfiguresTemplateMap()
