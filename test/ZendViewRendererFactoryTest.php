@@ -164,12 +164,14 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->assertPathNamespaceCount(3, null, $paths);
 
         $dirSlash = DIRECTORY_SEPARATOR;
+        // @codingStandardsIgnoreStart
         $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/bar' . $dirSlash, 'foo', $paths, var_export($paths, 1));
         $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/baz' . $dirSlash, 'bar', $paths);
         $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/bat' . $dirSlash, 'bar', $paths);
         $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/one' . $dirSlash, null, $paths);
         $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/two' . $dirSlash, null, $paths);
         $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/three' . $dirSlash, null, $paths);
+        // @codingStandardsIgnoreEnd
     }
 
     public function testConfiguresTemplateMap()
