@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 0.3.0 - TBD
+## 0.3.0 - 2015-12-02
 
 ### Added
 
@@ -37,6 +37,10 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - [#6](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/6)
   Merge route result params with those provided
+- [#10](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/10)
+  updates the code to depend on [zendframework/zend-expressive-template](https://github.com/zendframework/zend-expressive-template)
+  and [zendframework/zend-expressive-router](https://github.com/zendframework/zend-expressive-router)
+  instead of zendframework/zend-expressive.
 
 ## 0.2.0 - 2015-10-20
 
