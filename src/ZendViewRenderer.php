@@ -9,9 +9,9 @@
 
 namespace Zend\Expressive\ZendView;
 
-use Zend\Expressive\Exception;
 use Zend\Expressive\Template\ArrayParametersTrait;
 use Zend\Expressive\Template\DefaultParamsTrait;
+use Zend\Expressive\Template\Exception;
 use Zend\Expressive\Template\TemplatePath;
 use Zend\Expressive\Template\TemplateRendererInterface;
 use Zend\View\Model\ModelInterface;

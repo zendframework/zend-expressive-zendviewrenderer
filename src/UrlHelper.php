@@ -7,10 +7,11 @@
 
 namespace Zend\Expressive\ZendView;
 
-use Zend\Expressive\Exception;
+use Zend\Expressive\Router\Exception\RuntimeException;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Router\RouteResult;
 use Zend\Expressive\Router\RouteResultObserverInterface;
+use Zend\Expressive\Template\Exception\RenderingException;
 use Zend\View\Helper\AbstractHelper;
 
 class UrlHelper extends AbstractHelper implements RouteResultObserverInterface
@@ -37,17 +38,16 @@ class UrlHelper extends AbstractHelper implements RouteResultObserverInterface
      * @param string $route
      * @param array $params
      * @return string
-     * @throws Exception\RenderingException if no route provided, and no result
-     *     match present.
-     * @throws Exception\RenderingException if no route provided, and result
-     *     match is a routing failure.
-     * @throws Exception\RuntimeException if router cannot generate URI for
-     *     given route.
+     * @throws RenderingException if no route provided, and no result match
+     *     present.
+     * @throws RenderingException if no route provided, and result match is a
+     *     routing failure.
+     * @throws RuntimeException if router cannot generate URI for given route.
      */
     public function __invoke($route = null, $params = [])
     {
         if ($route === null && $this->result === null) {
-            throw new Exception\RenderingException(
+            throw new RenderingException(
                 'Attempting to use matched result when none was injected; aborting'
             );
         }
@@ -82,13 +82,12 @@ class UrlHelper extends AbstractHelper implements RouteResultObserverInterface
     /**
      * @param array $params
      * @return string
-     * @throws Exception\RenderingException if current result is a routing
-     *     failure.
+     * @throws RenderingException if current result is a routing failure.
      */
     private function generateUriFromResult(array $params)
     {
         if ($this->result->isFailure()) {
-            throw new Exception\RenderingException(
+            throw new RenderingException(
                 'Attempting to use matched result when routing failed; aborting'
             );
         }
