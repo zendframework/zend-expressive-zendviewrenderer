@@ -11,148 +11,33 @@ namespace ZendTest\Expressive\ZendView;
 
 use PHPUnit_Framework_TestCase as TestCase;
 use Psr\Http\Message\UriInterface;
-use Zend\Diactoros\Uri;
+use Zend\Expressive\Helper\ServerUrlHelper as BaseHelper;
 use Zend\Expressive\ZendView\ServerUrlHelper;
 
 class ServerUrlHelperTest extends TestCase
 {
-    public function plainPaths()
+    public function setUp()
     {
-        // @codingStandardsIgnoreStart
-        return [
-            'null'          => [null,       '/'],
-            'empty'         => ['',         '/'],
-            'root'          => ['/',        '/'],
-            'relative-path' => ['foo/bar',  '/foo/bar'],
-            'abs-path'      => ['/foo/bar', '/foo/bar'],
-        ];
-        // @codingStandardsIgnoreEnd
+        $this->baseHelper = $this->prophesize(BaseHelper::class);
     }
 
-    /**
-     * @dataProvider plainPaths
-     */
-    public function testInvocationReturnsPathOnlyIfNoUriInjected($path, $expected)
+    public function createHelper()
     {
-        $helper = new ServerUrlHelper();
-        $this->assertEquals($expected, $helper($path));
+        return new ServerUrlHelper($this->baseHelper->reveal());
     }
 
-    public function plainPathsForUseWithUri()
+    public function testInvocationProxiesToBaseHelper()
     {
-        $uri = new Uri('https://example.com/resource');
-        // @codingStandardsIgnoreStart
-        return [
-            'null'          => [$uri, null,       'https://example.com/resource'],
-            'empty'         => [$uri, '',         'https://example.com/resource'],
-            'root'          => [$uri, '/',        'https://example.com/'],
-            'relative-path' => [$uri, 'foo/bar',  'https://example.com/resource/foo/bar'],
-            'abs-path'      => [$uri, '/foo/bar', 'https://example.com/foo/bar'],
-        ];
-        // @codingStandardsIgnoreEnd
+        $this->baseHelper->generate('/foo')->willReturn('https://example.com/foo');
+        $helper = $this->createHelper();
+        $this->assertEquals('https://example.com/foo', $helper('/foo'));
     }
 
-    /**
-     * @dataProvider plainPathsForUseWithUri
-     */
-    public function testInvocationReturnsUriComposingPathWhenUriInjected(UriInterface $uri, $path, $expected)
+    public function testSetUriProxiesToBaseHelper()
     {
-        $helper = new ServerUrlHelper();
-        $helper->setUri($uri);
-        $this->assertEquals((string) $expected, $helper($path));
-    }
-
-    public function uriWithQueryString()
-    {
-        $uri = new Uri('https://example.com/resource?bar=baz');
-        // @codingStandardsIgnoreStart
-        return [
-            'null'          => [$uri, null,       'https://example.com/resource'],
-            'empty'         => [$uri, '',         'https://example.com/resource'],
-            'root'          => [$uri, '/',        'https://example.com/'],
-            'relative-path' => [$uri, 'foo/bar',  'https://example.com/resource/foo/bar'],
-            'abs-path'      => [$uri, '/foo/bar', 'https://example.com/foo/bar'],
-        ];
-        // @codingStandardsIgnoreEnd
-    }
-
-    /**
-     * @dataProvider uriWithQueryString
-     */
-    public function testStripsQueryStringFromInjectedUri(UriInterface $uri, $path, $expected)
-    {
-        $helper = new ServerUrlHelper();
-        $helper->setUri($uri);
-        $this->assertEquals($expected, $helper($path));
-    }
-
-    public function uriWithFragment()
-    {
-        $uri = new Uri('https://example.com/resource#bar');
-        // @codingStandardsIgnoreStart
-        return [
-            'null'          => [$uri, null,       'https://example.com/resource'],
-            'empty'         => [$uri, '',         'https://example.com/resource'],
-            'root'          => [$uri, '/',        'https://example.com/'],
-            'relative-path' => [$uri, 'foo/bar',  'https://example.com/resource/foo/bar'],
-            'abs-path'      => [$uri, '/foo/bar', 'https://example.com/foo/bar'],
-        ];
-        // @codingStandardsIgnoreEnd
-    }
-
-    /**
-     * @dataProvider uriWithFragment
-     */
-    public function testStripsFragmentFromInjectedUri(UriInterface $uri, $path, $expected)
-    {
-        $helper = new ServerUrlHelper();
-        $helper->setUri($uri);
-        $this->assertEquals($expected, $helper($path));
-    }
-
-    public function pathsWithQueryString()
-    {
-        $uri = new Uri('https://example.com/resource');
-        // @codingStandardsIgnoreStart
-        return [
-            'empty-path'    => [$uri, '?foo=bar',         'https://example.com/resource?foo=bar'],
-            'root-path'     => [$uri, '/?foo=bar',        'https://example.com/?foo=bar'],
-            'relative-path' => [$uri, 'foo/bar?foo=bar',  'https://example.com/resource/foo/bar?foo=bar'],
-            'abs-path'      => [$uri, '/foo/bar?foo=bar', 'https://example.com/foo/bar?foo=bar'],
-        ];
-        // @codingStandardsIgnoreEnd
-    }
-
-    /**
-     * @dataProvider pathsWithQueryString
-     */
-    public function testUsesQueryStringFromProvidedPath(UriInterface $uri, $path, $expected)
-    {
-        $helper = new ServerUrlHelper();
-        $helper->setUri($uri);
-        $this->assertEquals($expected, $helper($path));
-    }
-
-    public function pathsWithFragment()
-    {
-        $uri = new Uri('https://example.com/resource');
-        // @codingStandardsIgnoreStart
-        return [
-            'empty-path'    => [$uri, '#bar',         'https://example.com/resource#bar'],
-            'root-path'     => [$uri, '/#bar',        'https://example.com/#bar'],
-            'relative-path' => [$uri, 'foo/bar#bar',  'https://example.com/resource/foo/bar#bar'],
-            'abs-path'      => [$uri, '/foo/bar#bar', 'https://example.com/foo/bar#bar'],
-        ];
-        // @codingStandardsIgnoreEnd
-    }
-
-    /**
-     * @dataProvider pathsWithFragment
-     */
-    public function testUsesFragmentFromProvidedPath(UriInterface $uri, $path, $expected)
-    {
-        $helper = new ServerUrlHelper();
-        $helper->setUri($uri);
-        $this->assertEquals($expected, $helper($path));
+        $uri = $this->prophesize(UriInterface::class);
+        $this->baseHelper->setUri($uri->reveal())->shouldBeCalled();
+        $helper = $this->createHelper();
+        $helper->setUri($uri->reveal());
     }
 }

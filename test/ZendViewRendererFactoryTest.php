@@ -11,7 +11,9 @@ namespace ZendTest\Expressive\ZendView;
 
 use Interop\Container\ContainerInterface;
 use PHPUnit_Framework_TestCase as TestCase;
+use Prophecy\Prophecy\ObjectProphecy;
 use ReflectionProperty;
+use Zend\Expressive\Helper;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Template\TemplatePath;
 use Zend\Expressive\ZendView\ServerUrlHelper;
@@ -101,10 +103,31 @@ class ZendViewRendererFactoryTest extends TestCase
         return $r->getValue($view);
     }
 
+    public function injectContainerService($name, $service)
+    {
+        $this->container->has($name)->willReturn(true);
+        $this->container->get($name)->willReturn(
+            $service instanceof ObjectProphecy ? $service->reveal() : $service
+        );
+    }
+
+    public function injectBaseHelpers()
+    {
+        $this->injectContainerService(
+            Helper\UrlHelper::class,
+            $this->prophesize(Helper\UrlHelper::class)
+        );
+        $this->injectContainerService(
+            Helper\ServerUrlHelper::class,
+            $this->prophesize(Helper\ServerUrlHelper::class)
+        );
+    }
+
     public function testCallingFactoryWithNoConfigReturnsZendViewInstance()
     {
         $this->container->has('config')->willReturn(false);
         $this->container->has(HelperPluginManager::class)->willReturn(false);
+        $this->injectBaseHelpers();
         $factory = new ZendViewRendererFactory();
         $view    = $factory($this->container->reveal());
         $this->assertInstanceOf(ZendViewRenderer::class, $view);
@@ -131,6 +154,7 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->container->has('config')->willReturn(true);
         $this->container->get('config')->willReturn($config);
         $this->container->has(HelperPluginManager::class)->willReturn(false);
+        $this->injectBaseHelpers();
         $factory = new ZendViewRendererFactory();
         $view = $factory($this->container->reveal());
 
@@ -151,6 +175,7 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->container->has('config')->willReturn(true);
         $this->container->get('config')->willReturn($config);
         $this->container->has(HelperPluginManager::class)->willReturn(false);
+        $this->injectBaseHelpers();
         $factory = new ZendViewRendererFactory();
         $view = $factory($this->container->reveal());
 
@@ -187,6 +212,7 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->container->has('config')->willReturn(true);
         $this->container->get('config')->willReturn($config);
         $this->container->has(HelperPluginManager::class)->willReturn(false);
+        $this->injectBaseHelpers();
         $factory = new ZendViewRendererFactory();
         $view = $factory($this->container->reveal());
 
@@ -213,9 +239,7 @@ class ZendViewRendererFactoryTest extends TestCase
         $router = $this->prophesize(RouterInterface::class)->reveal();
         $this->container->has('config')->willReturn(false);
         $this->container->has(HelperPluginManager::class)->willReturn(false);
-        $this->container->has(UrlHelper::class)->willReturn(false);
-        $this->container->has(RouterInterface::class)->willReturn(true);
-        $this->container->get(RouterInterface::class)->willReturn($router);
+        $this->injectBaseHelpers();
         $factory = new ZendViewRendererFactory();
         $view    = $factory($this->container->reveal());
         $this->assertInstanceOf(ZendViewRenderer::class, $view);
@@ -233,9 +257,7 @@ class ZendViewRendererFactoryTest extends TestCase
     {
         $router = $this->prophesize(RouterInterface::class)->reveal();
         $this->container->has('config')->willReturn(false);
-        $this->container->has(RouterInterface::class)->willReturn(true);
-        $this->container->get(RouterInterface::class)->willReturn($router);
-        $this->container->has(UrlHelper::class)->willReturn(false);
+        $this->injectBaseHelpers();
 
         $helpers = new HelperPluginManager();
         $this->container->has(HelperPluginManager::class)->willReturn(true);
@@ -258,24 +280,5 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->assertTrue($helpers->has('serverurl'));
         $this->assertInstanceOf(UrlHelper::class, $helpers->get('url'));
         $this->assertInstanceOf(ServerUrlHelper::class, $helpers->get('serverurl'));
-    }
-
-    public function testWillUseUrlHelperFromContainerWhenAvailable()
-    {
-        $urlHelper = $this->prophesize(UrlHelper::class)->reveal();
-        $router = $this->prophesize(RouterInterface::class)->reveal();
-        $this->container->has('config')->willReturn(false);
-        $this->container->has(HelperPluginManager::class)->willReturn(false);
-        $this->container->has(UrlHelper::class)->willReturn(true);
-        $this->container->get(UrlHelper::class)->willReturn($urlHelper);
-        $this->container->has(RouterInterface::class)->willReturn(true);
-        $this->container->get(RouterInterface::class)->willReturn($router);
-        $factory = new ZendViewRendererFactory();
-        $view    = $factory($this->container->reveal());
-
-        $renderer = $this->fetchPhpRenderer($view);
-        $helpers  = $renderer->getHelperPluginManager();
-        $this->assertTrue($helpers->has('url'));
-        $this->assertSame($urlHelper, $helpers->get('url'));
     }
 }
