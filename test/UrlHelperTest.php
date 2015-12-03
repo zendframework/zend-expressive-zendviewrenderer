@@ -14,7 +14,7 @@ use PHPUnit_Framework_TestCase as TestCase;
 use Zend\Expressive\Router\Exception\RuntimeException;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Router\RouteResult;
-use Zend\Expressive\Router\RouteResultObserverInterface;
+use Zend\Expressive\RouteResultObserverInterface;
 use Zend\Expressive\Template\Exception;
 use Zend\Expressive\ZendView\UrlHelper;
 

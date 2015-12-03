@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 0.3.1 - TBD
+## 0.3.1 - 2015-12-03
 
 ### Added
 
@@ -18,7 +18,12 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#12](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/12)
+  updates the `UrlHelper` to implement the `Zend\Expressive\RouteResultObserverInterface`
+  from the zendframework/zend-expressive package, instead of
+  `Zend\Expressive\Router\RouteResultObserverInterface` from the
+  zendframework/zend-expressive-router package (as it is now
+  [deprecated](https://github.com/zendframework/zend-expressive-router/pull/3).
 
 ## 0.3.0 - 2015-12-02
 
