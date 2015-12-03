@@ -10,7 +10,7 @@ namespace Zend\Expressive\ZendView;
 use Zend\Expressive\Router\Exception\RuntimeException;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Router\RouteResult;
-use Zend\Expressive\Router\RouteResultObserverInterface;
+use Zend\Expressive\RouteResultObserverInterface;
 use Zend\Expressive\Template\Exception\RenderingException;
 use Zend\View\Helper\AbstractHelper;
 
