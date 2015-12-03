@@ -10,6 +10,8 @@
 namespace Zend\Expressive\ZendView;
 
 use Interop\Container\ContainerInterface;
+use Zend\Expressive\Helper\ServerUrlHelper as BaseServerUrlHelper;
+use Zend\Expressive\Helper\UrlHelper as BaseUrlHelper;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\View\HelperPluginManager;
 use Zend\View\Renderer\PhpRenderer;
@@ -103,12 +105,23 @@ class ZendViewRendererFactory
             : new HelperPluginManager();
 
         $helpers->setFactory('url', function () use ($container) {
-            if ($container->has(UrlHelper::class)) {
-                return $container->get(UrlHelper::class);
+            if (! $container->has(BaseUrlHelper::class)) {
+                throw new Exception\MissingHelperException(sprintf(
+                    'An instance of %s is required in order to create the "url" view helper; not found',
+                    BaseUrlHelper::class
+                ));
             }
-            return new UrlHelper($container->get(RouterInterface::class));
+            return new UrlHelper($container->get(BaseUrlHelper::class));
         });
-        $helpers->setInvokableClass('serverurl', ServerUrlHelper::class);
+        $helpers->setFactory('serverurl', function () use ($container) {
+            if (! $container->has(BaseServerUrlHelper::class)) {
+                throw new Exception\MissingHelperException(sprintf(
+                    'An instance of %s is required in order to create the "url" view helper; not found',
+                    BaseServerUrlHelper::class
+                ));
+            }
+            return new ServerUrlHelper($container->get(BaseServerUrlHelper::class));
+        });
 
         $renderer->setHelperPluginManager($helpers);
     }
