@@ -23,6 +23,29 @@ can recommend the following implementations:
   `composer require mouf/pimple-interop`
 - [Aura.Di](https://github.com/auraphp/Aura.Di)
 
+## View Helpers
+
+To use view helpers, the `ZendViewRendererFactory`:
+
+- requires a `config` service; with
+- a `view_helpers` sub-key; which
+- follows standard zend-servicemanager configuration.
+
+To use the `UrlHelper` provided in this package, ensure that you register its
+factory in that configuration:
+
+```php
+use Zend\Expressive\ZendView\UrlHelperFactory;
+
+return [
+    'view_helpers' => [
+        'factories' => [
+            'url' => UrlHelperFactory::class,
+        ],
+    ],
+];
+```
+
 ## Documentation
 
 See the [zend-expressive](https://github.com/zendframework/zend-expressive/blob/master/doc/book)
