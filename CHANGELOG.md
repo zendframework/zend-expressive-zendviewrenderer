@@ -2,11 +2,17 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 0.3.2 - TBD
+## 0.4.0 - 2015-12-03
 
 ### Added
 
-- Nothing.
+- [#11](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/11)
+  adds a factory for providing the `HelperPluginManager`, and support in the
+  `ZendViewRendererFactory` for injecting the `HelperPluginManager` service
+  (using its FQCN) instead of instantiating one directly. 
+- [#13](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/13)
+  adds `zendframework/zend-expressive-helpers` as a dependency, in order to
+  consume its `UrlHelper` and `ServerUrlHelper` implementations.
 
 ### Deprecated
 
@@ -14,11 +20,24 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Removed
 
-- Nothing.
+- [#13](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/13)
+  removes the `UrlHelperFactory`.
+- [#13](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/13)
+  removes the `Zend\Expressive\ZendView\ApplicationUrlDelegatorFactory`. This
+  functionality is obsolete due to the changes made to the `UrlHelper` in this
+  release.
 
 ### Fixed
 
-- Nothing.
+- [#13](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/13)
+  updates the `UrlHelper` to be a proxy to `Zend\Expressive\Helper\UrlHelper`.
+- [#13](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/13)
+  updates the `ServerUrlHelper` to be a proxy to `Zend\Expressive\Helper\ServerUrlHelper`.
+- [#13](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/13)
+  modifies the logic for injecting the `url` and `serverurl` helpers to pull the
+  `Zend\Expressive\Helper\UrlHelper` and `Zend\Expressive\Helper\ServerUrlHelper`
+  instances, respectively, to inject into the package's own `UrlHelper` and
+  `ServerUrlHelper` instances.
 
 ## 0.3.1 - 2015-12-03
 
@@ -47,9 +66,9 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- [#4](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/)
+- [#4](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/4)
   Allow rendering view models via render
-- [#9](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/)
+- [#9](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/9)
   updates `UrlHelper` to implement `Zend\Expressive\Template\RouteResultObserverInterface`,
   and the `update()` method it defines. This allows it to observer the
   application for the `RouteResult` and store it for later URI generation.

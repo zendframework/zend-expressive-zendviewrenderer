@@ -10,18 +10,17 @@
 namespace Zend\Expressive\ZendView;
 
 use Interop\Container\ContainerInterface;
-use Zend\Expressive\Router\RouterInterface;
+use Zend\ServiceManager\Config;
+use Zend\View\HelperPluginManager;
 
-class UrlHelperFactory
+class HelperPluginManagerFactory
 {
-    /**
-     * Create a UrlHelper instance.
-     *
-     * @param ContainerInterface $container
-     * @return UrlHelper
-     */
     public function __invoke(ContainerInterface $container)
     {
-        return new UrlHelper($container->get(RouterInterface::class));
+        $config = $container->has('config') ? $container->get('config') : [];
+        $config = isset($config['view_helpers']) ? $config['view_helpers'] : [];
+        $manager = new HelperPluginManager(new Config($config));
+        $manager->setServiceLocator($container);
+        return $manager;
     }
 }
