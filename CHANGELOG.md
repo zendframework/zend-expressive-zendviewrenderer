@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 0.4.1 - TBD
+## 0.4.1 - 2015-12-06
 
 ### Added
 
@@ -18,7 +18,9 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#14](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/14)
+  updates the zend-expressive-helpers dependency to `^1.1`, allowing removal of
+  the zend-expressive development dependency.
 
 ## 0.4.0 - 2015-12-04
 
