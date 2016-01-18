@@ -18,7 +18,9 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#19](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/19)
+  updates the zend-expressive-helpers dependency to `^1.1 || ^2.0`, allowing it
+  to work with either version.
 
 ## 1.0.0 - 2015-12-07
 
