@@ -247,6 +247,7 @@ class ZendViewRendererFactoryTest extends TestCase
 
         $renderer = $this->fetchPhpRenderer($view);
         $helpers  = $renderer->getHelperPluginManager();
+
         $this->assertInstanceOf(HelperPluginManager::class, $helpers);
         $this->assertTrue($helpers->has('url'));
         $this->assertTrue($helpers->has('serverurl'));
