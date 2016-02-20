@@ -10,40 +10,46 @@
 namespace ZendTest\Expressive\ZendView;
 
 use PHPUnit_Framework_TestCase;
-use Interop\Container\ContainerInterface;
 use Zend\Expressive\Helper\ServerUrlHelper as BaseServerUrlHelper;
 use Zend\Expressive\ZendView\Exception\MissingHelperException;
 use Zend\Expressive\ZendView\ServerUrlHelper;
 use Zend\Expressive\ZendView\ServerUrlHelperFactory;
+use Zend\ServiceManager\ServiceManager;
 use Zend\View\HelperPluginManager;
 
 class ServerUrlHelperFactoryTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var ContainerInterface
+     * @var ServiceManager
      */
     private $container;
 
     public function setUp()
     {
-        $this->container = $this->prophesize(ContainerInterface::class);
+        $this->container = new ServiceManager();
     }
 
-    public function testCreatesUrlViewHelper()
+    public function testCreatesServerUrlViewHelper()
     {
         $baseHelper = $this->prophesize(BaseServerUrlHelper::class);
-        $this->container->has(BaseServerUrlHelper::class)->willReturn(true);
-        $this->container->get(BaseServerUrlHelper::class)->willReturn($baseHelper->reveal());
-        $helpers = new HelperPluginManager($this->container->reveal());
+        $this->container->setService(BaseServerUrlHelper::class, $baseHelper->reveal());
+        $helpers = new HelperPluginManager($this->container);
         $factory = new ServerUrlHelperFactory();
-        $helper = $factory($helpers);
+
+        // test if we are using Zend\ServiceManager v2 or v3
+        if (! method_exists($helpers, 'configure')) {
+            $container = $helpers;
+        } else {
+            $container = $this->container;
+        }
+
+        $helper = $factory($container);
         $this->assertInstanceOf(ServerUrlHelper::class, $helper);
     }
 
-    public function testExceptionIsRisedIfBaseHelperIsNotAvailableInContainer()
+    public function testExceptionIsRaisedIfBaseHelperIsNotAvailableInContainer()
     {
-        $this->container->has(BaseServerUrlHelper::class)->willReturn(false);
-        $helpers = new HelperPluginManager($this->container->reveal());
+        $helpers = new HelperPluginManager($this->container);
         $factory = new ServerUrlHelperFactory();
         $this->setExpectedException(MissingHelperException::class);
         $factory($helpers);

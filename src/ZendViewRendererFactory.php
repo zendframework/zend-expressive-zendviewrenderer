@@ -10,6 +10,7 @@
 namespace Zend\Expressive\ZendView;
 
 use Interop\Container\ContainerInterface;
+use Zend\ServiceManager\Config;
 use Zend\View\HelperPluginManager;
 use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Resolver;
@@ -101,8 +102,23 @@ class ZendViewRendererFactory
             ? $container->get(HelperPluginManager::class)
             : new HelperPluginManager($container);
 
-        $helpers->setFactory('url', UrlHelperFactory::class);
-        $helpers->setFactory('serverurl', ServerUrlHelperFactory::class);
+        $config = new Config([
+            'aliases' => [
+                'url' => UrlHelper::class,
+                'Url' => UrlHelper::class,
+                'serverUrl' => ServerUrlHelper::class,
+                'ServerUrl' => ServerUrlHelper::class,
+                'serverurl' => ServerUrlHelper::class,
+            ],
+            'factories' => [
+                UrlHelper::class => UrlHelperFactory::class,
+                ServerUrlHelper::class => ServerUrlHelperFactory::class,
+
+                'zendexpressivezendviewurlhelper' => UrlHelperFactory::class,
+                'zendexpressivezendviewserverurlhelper' => ServerUrlHelperFactory::class,
+            ],
+        ]);
+        $config->configureServiceManager($helpers);
 
         $renderer->setHelperPluginManager($helpers);
     }
