@@ -102,17 +102,9 @@ class ZendViewRendererFactory
     {
         $helpers = $container->has(HelperPluginManager::class)
             ? $container->get(HelperPluginManager::class)
-            : new HelperPluginManager();
+            : new HelperPluginManager($container);
 
-        $helpers->setFactory('url', function () use ($container) {
-            if (! $container->has(BaseUrlHelper::class)) {
-                throw new Exception\MissingHelperException(sprintf(
-                    'An instance of %s is required in order to create the "url" view helper; not found',
-                    BaseUrlHelper::class
-                ));
-            }
-            return new UrlHelper($container->get(BaseUrlHelper::class));
-        });
+        $helpers->setFactory('url', UrlHelperFactory::class);
         $helpers->setFactory('serverurl', function () use ($container) {
             if (! $container->has(BaseServerUrlHelper::class)) {
                 throw new Exception\MissingHelperException(sprintf(

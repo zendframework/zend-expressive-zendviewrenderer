@@ -259,7 +259,7 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->container->has('config')->willReturn(false);
         $this->injectBaseHelpers();
 
-        $helpers = new HelperPluginManager();
+        $helpers = new HelperPluginManager($this->container->reveal());
         $this->container->has(HelperPluginManager::class)->willReturn(true);
         $this->container->get(HelperPluginManager::class)->willReturn($helpers);
         $factory = new ZendViewRendererFactory();
