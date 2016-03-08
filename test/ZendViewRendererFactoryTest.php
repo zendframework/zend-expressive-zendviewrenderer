@@ -20,6 +20,7 @@ use Zend\Expressive\ZendView\ServerUrlHelper;
 use Zend\Expressive\ZendView\UrlHelper;
 use Zend\Expressive\ZendView\ZendViewRenderer;
 use Zend\Expressive\ZendView\ZendViewRendererFactory;
+use Zend\ServiceManager\ServiceManager;
 use Zend\View\HelperPluginManager;
 use Zend\View\Model\ModelInterface;
 use Zend\View\Resolver\AggregateResolver;
@@ -246,6 +247,7 @@ class ZendViewRendererFactoryTest extends TestCase
 
         $renderer = $this->fetchPhpRenderer($view);
         $helpers  = $renderer->getHelperPluginManager();
+
         $this->assertInstanceOf(HelperPluginManager::class, $helpers);
         $this->assertTrue($helpers->has('url'));
         $this->assertTrue($helpers->has('serverurl'));
@@ -259,7 +261,7 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->container->has('config')->willReturn(false);
         $this->injectBaseHelpers();
 
-        $helpers = new HelperPluginManager();
+        $helpers = new HelperPluginManager($this->container->reveal());
         $this->container->has(HelperPluginManager::class)->willReturn(true);
         $this->container->get(HelperPluginManager::class)->willReturn($helpers);
         $factory = new ZendViewRendererFactory();

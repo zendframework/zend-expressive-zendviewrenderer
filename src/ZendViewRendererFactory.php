@@ -10,9 +10,7 @@
 namespace Zend\Expressive\ZendView;
 
 use Interop\Container\ContainerInterface;
-use Zend\Expressive\Helper\ServerUrlHelper as BaseServerUrlHelper;
-use Zend\Expressive\Helper\UrlHelper as BaseUrlHelper;
-use Zend\Expressive\Router\RouterInterface;
+use Zend\ServiceManager\Config;
 use Zend\View\HelperPluginManager;
 use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Resolver;
@@ -102,26 +100,25 @@ class ZendViewRendererFactory
     {
         $helpers = $container->has(HelperPluginManager::class)
             ? $container->get(HelperPluginManager::class)
-            : new HelperPluginManager();
+            : new HelperPluginManager($container);
 
-        $helpers->setFactory('url', function () use ($container) {
-            if (! $container->has(BaseUrlHelper::class)) {
-                throw new Exception\MissingHelperException(sprintf(
-                    'An instance of %s is required in order to create the "url" view helper; not found',
-                    BaseUrlHelper::class
-                ));
-            }
-            return new UrlHelper($container->get(BaseUrlHelper::class));
-        });
-        $helpers->setFactory('serverurl', function () use ($container) {
-            if (! $container->has(BaseServerUrlHelper::class)) {
-                throw new Exception\MissingHelperException(sprintf(
-                    'An instance of %s is required in order to create the "url" view helper; not found',
-                    BaseServerUrlHelper::class
-                ));
-            }
-            return new ServerUrlHelper($container->get(BaseServerUrlHelper::class));
-        });
+        $config = new Config([
+            'aliases' => [
+                'url' => UrlHelper::class,
+                'Url' => UrlHelper::class,
+                'serverUrl' => ServerUrlHelper::class,
+                'ServerUrl' => ServerUrlHelper::class,
+                'serverurl' => ServerUrlHelper::class,
+            ],
+            'factories' => [
+                UrlHelper::class => UrlHelperFactory::class,
+                ServerUrlHelper::class => ServerUrlHelperFactory::class,
+
+                'zendexpressivezendviewurlhelper' => UrlHelperFactory::class,
+                'zendexpressivezendviewserverurlhelper' => ServerUrlHelperFactory::class,
+            ],
+        ]);
+        $config->configureServiceManager($helpers);
 
         $renderer->setHelperPluginManager($helpers);
     }

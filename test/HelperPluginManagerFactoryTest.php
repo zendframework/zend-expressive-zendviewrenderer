@@ -41,7 +41,7 @@ class HelperPluginManagerFactoryTest extends TestCase
     {
         $this->container->has('config')->willReturn(true);
         $this->container->get('config')->willReturn([]);
-        $factory = new HelperPluginManagerFactory();
+        $factory = new HelperPluginManagerFactory($this->container->reveal());
         $manager = $factory($this->container->reveal());
         $this->assertInstanceOf(HelperPluginManager::class, $manager);
         return $manager;
@@ -59,7 +59,7 @@ class HelperPluginManagerFactoryTest extends TestCase
                 ],
             ]
         );
-        $factory = new HelperPluginManagerFactory();
+        $factory = new HelperPluginManagerFactory($this->container->reveal());
         $manager = $factory($this->container->reveal());
         $this->assertInstanceOf(HelperPluginManager::class, $manager);
         $this->assertTrue($manager->has('testHelper'));
