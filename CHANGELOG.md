@@ -2,29 +2,12 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.1.0 - TBD
+## 1.1.0 - 2016-03-23
 
 ### Added
 
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
-
-## 1.0.2 - TBD
-
-### Added
-
-- Nothing.
+- [#22](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/22)
+  adds support for the zend-eventmanager and zend-servicemanager v3 releases.
 
 ### Deprecated
 

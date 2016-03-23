@@ -102,9 +102,11 @@ class ZendViewRendererFactory
     {
         $helpers = $container->has(HelperPluginManager::class)
             ? $container->get(HelperPluginManager::class)
-            : new HelperPluginManager();
+            : new HelperPluginManager($container);
 
-        $helpers->setFactory('url', function () use ($container) {
+        $helpers->setAlias('url', BaseUrlHelper::class);
+        $helpers->setAlias('Url', BaseUrlHelper::class);
+        $helpers->setFactory(BaseUrlHelper::class, function () use ($container) {
             if (! $container->has(BaseUrlHelper::class)) {
                 throw new Exception\MissingHelperException(sprintf(
                     'An instance of %s is required in order to create the "url" view helper; not found',
@@ -113,7 +115,11 @@ class ZendViewRendererFactory
             }
             return new UrlHelper($container->get(BaseUrlHelper::class));
         });
-        $helpers->setFactory('serverurl', function () use ($container) {
+
+        $helpers->setAlias('serverurl', BaseServerUrlHelper::class);
+        $helpers->setAlias('serverUrl', BaseServerUrlHelper::class);
+        $helpers->setAlias('ServerUrl', BaseServerUrlHelper::class);
+        $helpers->setFactory(BaseServerUrlHelper::class, function () use ($container) {
             if (! $container->has(BaseServerUrlHelper::class)) {
                 throw new Exception\MissingHelperException(sprintf(
                     'An instance of %s is required in order to create the "url" view helper; not found',

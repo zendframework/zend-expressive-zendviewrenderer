@@ -17,10 +17,12 @@ class HelperPluginManagerFactory
 {
     public function __invoke(ContainerInterface $container)
     {
+        $manager = new HelperPluginManager($container);
+
         $config = $container->has('config') ? $container->get('config') : [];
         $config = isset($config['view_helpers']) ? $config['view_helpers'] : [];
-        $manager = new HelperPluginManager(new Config($config));
-        $manager->setServiceLocator($container);
+        (new Config($config))->configureServiceManager($manager);
+
         return $manager;
     }
 }
