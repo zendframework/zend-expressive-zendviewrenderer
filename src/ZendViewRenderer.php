@@ -127,7 +127,10 @@ class ZendViewRenderer implements TemplateRendererInterface
             ? $this->mergeViewModel($name, $params)
             : $this->createModel($name, $params);
 
-        $viewModel = $this->prepareLayout($viewModel);
+        $useLayout = false !== $viewModel->getVariable('layout', null);
+        if ($useLayout) {
+            $viewModel = $this->prepareLayout($viewModel);
+        }
 
         return $this->renderModel($viewModel, $this->renderer);
     }
@@ -319,9 +322,7 @@ class ZendViewRenderer implements TemplateRendererInterface
      */
     private function prepareLayout(ModelInterface $viewModel)
     {
-        $layout = $this->layout ? clone $this->layout : null;
-
-        $providedLayout = $viewModel->getVariable('layout', false);
+        $providedLayout = $viewModel->getVariable('layout', null);
         if (is_string($providedLayout) && ! empty($providedLayout)) {
             $layout = new ViewModel();
             $layout->setTemplate($providedLayout);
@@ -329,6 +330,8 @@ class ZendViewRenderer implements TemplateRendererInterface
         } elseif ($providedLayout instanceof ModelInterface) {
             $layout = $providedLayout;
             $viewModel->setVariable('layout', null);
+        } else {
+            $layout = $this->layout ? clone $this->layout : null;
         }
 
         if ($layout) {
