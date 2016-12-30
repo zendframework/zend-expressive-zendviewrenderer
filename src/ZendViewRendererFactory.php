@@ -5,6 +5,8 @@
  * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types = 1);
+
 namespace Zend\Expressive\ZendView;
 
 use Interop\Container\ContainerInterface;
@@ -54,12 +56,12 @@ class ZendViewRendererFactory
     public function __invoke(ContainerInterface $container)
     {
         $config   = $container->has('config') ? $container->get('config') : [];
-        $config   = isset($config['templates']) ? $config['templates'] : [];
+        $config   = $config['templates'] ?? [];
 
         // Configuration
         $resolver = new Resolver\AggregateResolver();
         $resolver->attach(
-            new Resolver\TemplateMapResolver(isset($config['map']) ? $config['map'] : []),
+            new Resolver\TemplateMapResolver($config['map'] ?? []),
             100
         );
 
@@ -71,10 +73,10 @@ class ZendViewRendererFactory
         $this->injectHelpers($renderer, $container);
 
         // Inject renderer
-        $view = new ZendViewRenderer($renderer, isset($config['layout']) ? $config['layout'] : null);
+        $view = new ZendViewRenderer($renderer, $config['layout'] ?? null);
 
         // Add template paths
-        $allPaths = isset($config['paths']) && is_array($config['paths']) ? $config['paths'] : [];
+        $allPaths = $config['paths'] ?? [];
         foreach ($allPaths as $namespace => $paths) {
             $namespace = is_numeric($namespace) ? null : $namespace;
             foreach ((array) $paths as $path) {

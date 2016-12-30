@@ -5,6 +5,8 @@
  * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types = 1);
+
 namespace Zend\Expressive\ZendView;
 
 use SplFileInfo;
@@ -195,7 +197,7 @@ class NamespacedPathStackResolver extends TemplatePathStack
      * @param string $namespace
      * @return false|string String path on success; false on failure
      */
-    private function getPathFromNamespace($template, $namespace)
+    private function getPathFromNamespace(string $template, string $namespace)
     {
         if (! array_key_exists($namespace, $this->paths)) {
             return false;
