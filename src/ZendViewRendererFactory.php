@@ -1,11 +1,11 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @see       https://github.com/zendframework/zend-expressive for the canonical source repository
- * @copyright Copyright (c) 2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   https://github.com/zendframework/zend-expressive/blob/master/LICENSE.md New BSD License
+ * @see       https://github.com/zendframework/zend-expressive-zendviewrenderer for the canonical source repository
+ * @copyright Copyright (c) 2015-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types = 1);
 
 namespace Zend\Expressive\ZendView;
 
@@ -56,12 +56,12 @@ class ZendViewRendererFactory
     public function __invoke(ContainerInterface $container)
     {
         $config   = $container->has('config') ? $container->get('config') : [];
-        $config   = isset($config['templates']) ? $config['templates'] : [];
+        $config   = $config['templates'] ?? [];
 
         // Configuration
         $resolver = new Resolver\AggregateResolver();
         $resolver->attach(
-            new Resolver\TemplateMapResolver(isset($config['map']) ? $config['map'] : []),
+            new Resolver\TemplateMapResolver($config['map'] ?? []),
             100
         );
 
@@ -73,10 +73,10 @@ class ZendViewRendererFactory
         $this->injectHelpers($renderer, $container);
 
         // Inject renderer
-        $view = new ZendViewRenderer($renderer, isset($config['layout']) ? $config['layout'] : null);
+        $view = new ZendViewRenderer($renderer, $config['layout'] ?? null);
 
         // Add template paths
-        $allPaths = isset($config['paths']) && is_array($config['paths']) ? $config['paths'] : [];
+        $allPaths = $config['paths'] ?? [];
         foreach ($allPaths as $namespace => $paths) {
             $namespace = is_numeric($namespace) ? null : $namespace;
             foreach ((array) $paths as $path) {

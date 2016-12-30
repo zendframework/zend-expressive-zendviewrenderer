@@ -1,9 +1,11 @@
 <?php
 /**
- * @see       http://github.com/zendframework/zend-expressive for the canonical source repository
- * @copyright Copyright (c) 2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   https://github.com/zendframework/zend-expressive/blob/master/LICENSE.md New BSD License
+ * @see       https://github.com/zendframework/zend-expressive-zendviewrenderer for the canonical source repository
+ * @copyright Copyright (c) 2015-2016 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types = 1);
 
 namespace Zend\Expressive\ZendView;
 
@@ -46,7 +48,7 @@ class NamespacedPathStackResolver extends TemplatePathStack
     {
         $this->useViewStream = (bool) ini_get('short_open_tag');
         if ($this->useViewStream) {
-            if (!in_array('zend.view', stream_get_wrappers())) {
+            if (! in_array('zend.view', stream_get_wrappers())) {
                 stream_wrapper_register('zend.view', 'Zend\View\Stream');
             }
         }
@@ -162,7 +164,7 @@ class NamespacedPathStackResolver extends TemplatePathStack
             );
         }
 
-        if (!count($this->paths)) {
+        if (! count($this->paths)) {
             $this->lastLookupFailure = static::FAILURE_NO_PATHS;
             return false;
         }
@@ -195,7 +197,7 @@ class NamespacedPathStackResolver extends TemplatePathStack
      * @param string $namespace
      * @return false|string String path on success; false on failure
      */
-    private function getPathFromNamespace($template, $namespace)
+    private function getPathFromNamespace(string $template, string $namespace)
     {
         if (! array_key_exists($namespace, $this->paths)) {
             return false;
