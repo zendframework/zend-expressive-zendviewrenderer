@@ -5,10 +5,12 @@
  * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types = 1);
+
 namespace ZendTest\Expressive\ZendView;
 
 use Interop\Container\ContainerInterface;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use ReflectionProperty;
 use Zend\Expressive\Helper;
@@ -48,7 +50,7 @@ class ZendViewRendererFactoryTest extends TestCase
 
     public function assertPathsHasNamespace($namespace, array $paths, $message = null)
     {
-        $message = $message ?: sprintf('Paths do not contain namespace %s', $namespace ?: 'null');
+        $message = $message ?? sprintf('Paths do not contain namespace %s', $namespace ?? 'null');
 
         $found = false;
         foreach ($paths as $path) {
@@ -63,7 +65,7 @@ class ZendViewRendererFactoryTest extends TestCase
 
     public function assertPathNamespaceCount($expected, $namespace, array $paths, $message = null)
     {
-        $message = $message ?: sprintf('Did not find %d paths with namespace %s', $expected, $namespace ?: 'null');
+        $message = $message ?? sprintf('Did not find %d paths with namespace %s', $expected, $namespace ?? 'null');
 
         $count = 0;
         foreach ($paths as $path) {
@@ -77,7 +79,7 @@ class ZendViewRendererFactoryTest extends TestCase
 
     public function assertPathNamespaceContains($expected, $namespace, array $paths, $message = null)
     {
-        $message = $message ?: sprintf('Did not find path %s in namespace %s', $expected, $namespace ?: null);
+        $message = $message ?? sprintf('Did not find path %s in namespace %s', $expected, $namespace ?? null);
 
         $found = [];
         foreach ($paths as $path) {
@@ -188,7 +190,7 @@ class ZendViewRendererFactoryTest extends TestCase
 
         $dirSlash = DIRECTORY_SEPARATOR;
         // @codingStandardsIgnoreStart
-        $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/bar' . $dirSlash, 'foo', $paths, var_export($paths, 1));
+        $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/bar' . $dirSlash, 'foo', $paths, var_export($paths, true));
         $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/baz' . $dirSlash, 'bar', $paths);
         $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/bat' . $dirSlash, 'bar', $paths);
         $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/one' . $dirSlash, null, $paths);

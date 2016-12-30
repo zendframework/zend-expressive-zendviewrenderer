@@ -5,10 +5,12 @@
  * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types = 1);
+
 namespace ZendTest\Expressive\ZendView;
 
 use Interop\Container\ContainerInterface;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Expressive\ZendView\HelperPluginManagerFactory;
 use Zend\ServiceManager\ServiceManager;
 use Zend\View\HelperPluginManager;

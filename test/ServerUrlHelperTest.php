@@ -5,9 +5,11 @@
  * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types = 1);
+
 namespace ZendTest\Expressive\ZendView;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Psr\Http\Message\UriInterface;
 use Zend\Expressive\Helper\ServerUrlHelper as BaseHelper;
 use Zend\Expressive\ZendView\ServerUrlHelper;

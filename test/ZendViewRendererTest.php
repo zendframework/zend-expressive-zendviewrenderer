@@ -5,10 +5,12 @@
  * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types = 1);
+
 namespace ZendTest\Expressive\ZendView;
 
 use ArrayObject;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase as TestCase;
 use Zend\Expressive\Template\Exception\InvalidArgumentException;
 use Zend\Expressive\Template\TemplatePath;
 use Zend\Expressive\ZendView\ZendViewRenderer;
@@ -49,19 +51,22 @@ class ZendViewRendererTest extends TestCase
 
     public function assertTemplatePathNamespace($namespace, TemplatePath $templatePath, $message = null)
     {
-        $message = $message ?: sprintf('Failed to assert TemplatePath namespace matched %s', var_export($namespace, 1));
+        $message = $message ?? sprintf(
+            'Failed to assert TemplatePath namespace matched %s',
+            var_export($namespace, true)
+        );
         $this->assertEquals($namespace, $templatePath->getNamespace(), $message);
     }
 
     public function assertEmptyTemplatePathNamespace(TemplatePath $templatePath, $message = null)
     {
-        $message = $message ?: 'Failed to assert TemplatePath namespace was empty';
+        $message = $message ?? 'Failed to assert TemplatePath namespace was empty';
         $this->assertEmpty($templatePath->getNamespace(), $message);
     }
 
     public function assertEqualTemplatePath(TemplatePath $expected, TemplatePath $received, $message = null)
     {
-        $message = $message ?: 'Failed to assert TemplatePaths are equal';
+        $message = $message ?? 'Failed to assert TemplatePaths are equal';
         if ($expected->getPath() !== $received->getPath()
             || $expected->getNamespace() !== $received->getNamespace()
         ) {
