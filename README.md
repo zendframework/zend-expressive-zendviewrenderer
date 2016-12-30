@@ -48,5 +48,4 @@ return [
 
 ## Documentation
 
-See the [zend-expressive](https://github.com/zendframework/zend-expressive/blob/master/doc/book)
-documentation tree, or browse online at http://zend-expressive.rtfd.org.
+See the Expressive [ZF2 View documentation](https://docs.zendframework.com/zend-expressive/features/template/zend-view/)
