@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.2.0 - TBD
+## 1.2.0 - 2017-01-11
 
 ### Added
 
@@ -54,23 +54,7 @@ All notable changes to this project will be documented in this file, in reverse 
   $ composer require zendframework/zend-filter zendframework/zend-i18n
   ```
 
-### Fixed
-
-- Nothing.
-
-## 1.1.1 - TBD
-
-### Added
-
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
+- This release removes support for PHP 5.5.
 
 ### Fixed
 
