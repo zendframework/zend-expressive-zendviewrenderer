@@ -46,7 +46,7 @@ class NamespacedPathStackResolver extends TemplatePathStack
     {
         $this->useViewStream = (bool) ini_get('short_open_tag');
         if ($this->useViewStream) {
-            if (!in_array('zend.view', stream_get_wrappers())) {
+            if (! in_array('zend.view', stream_get_wrappers())) {
                 stream_wrapper_register('zend.view', 'Zend\View\Stream');
             }
         }
@@ -162,7 +162,7 @@ class NamespacedPathStackResolver extends TemplatePathStack
             );
         }
 
-        if (!count($this->paths)) {
+        if (! count($this->paths)) {
             $this->lastLookupFailure = static::FAILURE_NO_PATHS;
             return false;
         }
