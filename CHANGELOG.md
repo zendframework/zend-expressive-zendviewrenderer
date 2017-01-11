@@ -8,13 +8,27 @@ All notable changes to this project will be documented in this file, in reverse 
 
 - Nothing.
 
+### Changed
+
+- [#26](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/26)
+  updated the zend-view dependency to 2.8.1+.
+
 ### Deprecated
 
 - Nothing.
 
 ### Removed
 
-- Nothing.
+- [#26](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/26)
+  removes the dependencies for the zend-i18n and zend-filter packages, as they
+  are no longer required by the minimum version of zend-view supported.
+
+  If you depended on features of these, you may need to re-add them to your
+  application:
+
+  ```bash
+  $ composer require zendframework/zend-filter zendframework/zend-i18n
+  ```
 
 ### Fixed
 
