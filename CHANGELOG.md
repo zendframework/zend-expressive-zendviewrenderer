@@ -6,7 +6,31 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- [#30](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/30)
+  adds support for zend-expressive-router 2.0.
+
+- [#30](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/30)
+  adds support for zend-expressive-helpers 2.2 and 3.0.
+
+- [#30](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/30)
+  adds new arguments to the `url()` helper:
+
+  ```php
+  echo $this->url(
+      $routeName,   // (optional) string route for which to generate URI; uses matched when absent
+      $routeParams, // (optional) array route parameter substitutions; uses matched when absent
+      $queryParams, // (optional) array query string arguments to include
+      $fragment,    // (optional) string URI fragment to include
+      $options,     // (optional) array of router options. The key `router` can
+                    //     contain options to pass to the router; the key
+                    //     `reuse_result_params` can be used to disable re-use of
+                    //     matched routing parameters.
+  );
+  ```
+
+  If using zend-expressive-router versions prior to 2.0 and/or
+  zend-expressive-helpers versions prior to 3.0, arguments after `$routeParams`
+  will be ignored.
 
 ### Changed
 
