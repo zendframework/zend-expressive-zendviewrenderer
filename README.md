@@ -35,7 +35,7 @@ To use the `UrlHelper` provided in this package, ensure that you register its
 factory in that configuration:
 
 ```php
-use Zend\Expressive\ZendView\UrlHelperFactory;
+use Zend\Expressive\Helper\UrlHelperFactory;
 
 return [
     'view_helpers' => [
