@@ -2,6 +2,62 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 1.2.0 - TBD
+
+### Added
+
+- [#30](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/30)
+  adds support for zend-expressive-router 2.0.
+
+- [#30](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/30)
+  adds support for zend-expressive-helpers 2.2 and 3.0.
+
+- [#30](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/30)
+  adds new arguments to the `url()` helper:
+
+  ```php
+  echo $this->url(
+      $routeName,   // (optional) string route for which to generate URI; uses matched when absent
+      $routeParams, // (optional) array route parameter substitutions; uses matched when absent
+      $queryParams, // (optional) array query string arguments to include
+      $fragment,    // (optional) string URI fragment to include
+      $options,     // (optional) array of router options. The key `router` can
+                    //     contain options to pass to the router; the key
+                    //     `reuse_result_params` can be used to disable re-use of
+                    //     matched routing parameters.
+  );
+  ```
+
+  If using zend-expressive-router versions prior to 2.0 and/or
+  zend-expressive-helpers versions prior to 3.0, arguments after `$routeParams`
+  will be ignored.
+
+### Changed
+
+- [#26](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/26)
+  updated the zend-view dependency to 2.8.1+.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- [#26](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/26)
+  removes the dependencies for the zend-i18n and zend-filter packages, as they
+  are no longer required by the minimum version of zend-view supported.
+
+  If you depended on features of these, you may need to re-add them to your
+  application:
+
+  ```bash
+  $ composer require zendframework/zend-filter zendframework/zend-i18n
+  ```
+
+### Fixed
+
+- Nothing.
+
 ## 1.1.1 - TBD
 
 ### Added
