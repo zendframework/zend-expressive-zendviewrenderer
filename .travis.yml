@@ -66,6 +66,7 @@ install:
 script:
   - composer test
   - if [[ $CHECK_CS == 'true' ]]; then composer cs ; fi
+  - if [[ $CHECK_CS == 'true' ]]; then composer license-check ; fi
 
 notifications:
   email: true
