@@ -25,7 +25,7 @@ class UrlHelperTest extends TestCase
 
     public function testInvocationProxiesToBaseHelper()
     {
-        $this->baseHelper->generate('resource', ['id' => 'sha1'], [], '', [])->willReturn('/resource/sha1');
+        $this->baseHelper->generate('resource', ['id' => 'sha1'], [], null, [])->willReturn('/resource/sha1');
         $helper = $this->createHelper();
         $this->assertEquals('/resource/sha1', $helper('resource', ['id' => 'sha1']));
     }
@@ -43,6 +43,25 @@ class UrlHelperTest extends TestCase
         $this->assertEquals(
             'PATH',
             $helper('resource', ['id' => 'sha1'], ['foo' => 'bar'], 'fragment', ['reuse_result_params' => true])
+        );
+    }
+
+    /**
+     * In particular, the fragment identifier needs to be null.
+     */
+    public function testUrlHelperPassesExpectedDefaultsToBaseHelper()
+    {
+        $this->baseHelper->generate(
+            null,
+            [],
+            [],
+            null,
+            []
+        )->willReturn('PATH');
+        $helper = $this->createHelper();
+        $this->assertEquals(
+            'PATH',
+            $helper()
         );
     }
 }
