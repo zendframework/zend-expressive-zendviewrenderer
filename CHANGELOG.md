@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 1.2.1 - TBD
+## 1.2.1 - 2017-01-12
 
 ### Added
 
@@ -18,7 +18,10 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#33](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/33)
+  fixes the signature of the `UrlHelper` to make the default value of
+  `$fragmentIdentifer` a `null` instead of `''`; this fixes an issue whereby
+  missing fragments led to exceptions thrown by zend-expressive-helpers.
 
 ## 1.2.0 - 2017-01-11
 
