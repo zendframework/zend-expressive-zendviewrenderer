@@ -1,10 +1,8 @@
 <?php
 /**
- * Zend Framework (http://framework.zend.com/)
- *
- * @see       https://github.com/zendframework/zend-expressive for the canonical source repository
- * @copyright Copyright (c) 2015 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   https://github.com/zendframework/zend-expressive/blob/master/LICENSE.md New BSD License
+ * @see       https://github.com/zendframework/zend-expressive-zendviewrenderer for the canonical source repository
+ * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
 
 namespace Zend\Expressive\ZendView;
@@ -21,7 +19,10 @@ class HelperPluginManagerFactory
 
         $config = $container->has('config') ? $container->get('config') : [];
         $config = isset($config['view_helpers']) ? $config['view_helpers'] : [];
-        (new Config($config))->configureServiceManager($manager);
+
+        if (! empty($config)) {
+            (new Config($config))->configureServiceManager($manager);
+        }
 
         return $manager;
     }
