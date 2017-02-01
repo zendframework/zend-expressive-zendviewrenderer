@@ -30,8 +30,8 @@ class ZendViewRendererTest extends TestCase
 
     public function setUp()
     {
-        $this->resolver = new TemplatePathStack;
-        $this->render = new PhpRenderer;
+        $this->resolver = new TemplatePathStack();
+        $this->render = new PhpRenderer();
         $this->render->setResolver($this->resolver);
     }
 
