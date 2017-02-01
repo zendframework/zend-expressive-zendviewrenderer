@@ -121,7 +121,7 @@ class ZendViewRenderer implements TemplateRendererInterface
      */
     public function render($name, $params = [])
     {
-        $viewModel = ($params instanceof ModelInterface)
+        $viewModel = $params instanceof ModelInterface
             ? $this->mergeViewModel($name, $params)
             : $this->createModel($name, $params);
 
