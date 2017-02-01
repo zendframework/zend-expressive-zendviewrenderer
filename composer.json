@@ -45,12 +45,14 @@
     "scripts": {
         "check": [
             "@license-check",
-            "@cs",
+            "@cs-check",
             "@test"
         ],
-        "cs": "phpcs",
-        "cs-fix": "phpcbf",
+        "upload-coverage": "coveralls -v",
+        "cs-check": "phpcs --colors",
+        "cs-fix": "phpcbf --colors",
         "license-check": "docheader check src/ test/",
-        "test": "phpunit --colors=always"
+        "test": "phpunit --colors=always",
+        "test-coverage": "phpunit --coverage-clover clover.xml"
     }
 }
