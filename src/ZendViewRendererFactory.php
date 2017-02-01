@@ -49,7 +49,7 @@ class ZendViewRendererFactory
 {
     /**
      * @param ContainerInterface $container
-     * @returns ZendViewRenderer
+     * @return ZendViewRenderer
      */
     public function __invoke(ContainerInterface $container)
     {
@@ -95,6 +95,8 @@ class ZendViewRendererFactory
      *
      * @param PhpRenderer $renderer
      * @param ContainerInterface $container
+     * @return void
+     * @throws Exception\MissingHelperException
      */
     private function injectHelpers(PhpRenderer $renderer, ContainerInterface $container)
     {

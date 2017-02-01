@@ -140,6 +140,8 @@ class ZendViewRendererTest extends TestCase
 
     /**
      * @dataProvider invalidParameterValues
+     *
+     * @param mixed $params
      */
     public function testRenderRaisesExceptionForInvalidParameterTypes($params)
     {
@@ -172,6 +174,9 @@ class ZendViewRendererTest extends TestCase
 
     /**
      * @dataProvider objectParameterValues
+     *
+     * @param object $params
+     * @param string $search
      */
     public function testCanRenderWithParameterObjects($params, $search)
     {
@@ -345,6 +350,8 @@ class ZendViewRendererTest extends TestCase
 
     /**
      * @dataProvider useArrayOrViewModel
+     *
+     * @param bool $viewAsModel
      */
     public function testOverrideSharedParametersAtRender($viewAsModel)
     {

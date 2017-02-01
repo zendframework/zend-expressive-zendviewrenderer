@@ -61,6 +61,7 @@ class NamespacedPathStackResolver extends TemplatePathStack
      *
      * @param string $path
      * @param string $namespace
+     * @return void
      * @throws ViewException\InvalidArgumentException for an invalid path
      * @throws ViewException\InvalidArgumentException for an invalid namespace
      */
@@ -94,6 +95,7 @@ class NamespacedPathStackResolver extends TemplatePathStack
      * Add many paths to the stack at once.
      *
      * @param array $paths
+     * @return void
      */
     public function addPaths(array $paths)
     {
@@ -110,6 +112,7 @@ class NamespacedPathStackResolver extends TemplatePathStack
      * Overwrite all existing paths with the provided paths.
      *
      * @param array|Traversable $paths
+     * @return void
      * @throws ViewException\InvalidArgumentException for invalid path types.
      */
     public function setPaths($paths)
@@ -131,6 +134,8 @@ class NamespacedPathStackResolver extends TemplatePathStack
 
     /**
      * Clear all paths.
+     *
+     * @return void
      */
     public function clearPaths()
     {
@@ -140,9 +145,9 @@ class NamespacedPathStackResolver extends TemplatePathStack
     /**
      * Retrieve the filesystem path to a view script
      *
-     * @param  string $name
-     * @param  null|RendererInterface $renderer
-     * @return string
+     * @param string $name
+     * @param null|RendererInterface $renderer
+     * @return false|string
      * @throws ViewException\DomainException
      */
     public function resolve($name, RendererInterface $renderer = null)

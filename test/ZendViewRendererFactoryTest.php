@@ -134,6 +134,8 @@ class ZendViewRendererFactoryTest extends TestCase
 
     /**
      * @depends testCallingFactoryWithNoConfigReturnsZendViewInstance
+     *
+     * @param ZendViewRenderer $view
      */
     public function testUnconfiguredZendViewInstanceContainsNoPaths(ZendViewRenderer $view)
     {
@@ -271,6 +273,8 @@ class ZendViewRendererFactoryTest extends TestCase
 
     /**
      * @depends testWillUseHelperManagerFromContainer
+     *
+     * @param HelperPluginManager $helpers
      */
     public function testInjectsCustomHelpersIntoHelperManagerFromContainer(HelperPluginManager $helpers)
     {

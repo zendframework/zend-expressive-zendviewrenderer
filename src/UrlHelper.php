@@ -29,10 +29,10 @@ class UrlHelper extends AbstractHelper
      * Proxies to `Zend\Expressive\Helper\UrlHelper::generate()`
      *
      * @param null|string $routeName
-     * @param array  $routeParams
-     * @param array  $queryParams
+     * @param array $routeParams
+     * @param array $queryParams
      * @param null|string $fragmentIdentifier
-     * @param array  $options Can have the following keys:
+     * @param array $options Can have the following keys:
      *     - router (array): contains options to be passed to the router
      *     - reuse_result_params (bool): indicates if the current RouteResult
      *       parameters will be used, defaults to true
