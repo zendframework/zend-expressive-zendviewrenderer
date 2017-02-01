@@ -7,12 +7,18 @@
 
 namespace ZendTest\Expressive\ZendView;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
+use Prophecy\Prophecy\ProphecyInterface;
 use Zend\Expressive\Helper\UrlHelper as BaseHelper;
 use Zend\Expressive\ZendView\UrlHelper;
 
 class UrlHelperTest extends TestCase
 {
+    /**
+     * @var BaseHelper|ProphecyInterface
+     */
+    private $baseHelper;
+
     public function setUp()
     {
         $this->baseHelper = $this->prophesize(BaseHelper::class);

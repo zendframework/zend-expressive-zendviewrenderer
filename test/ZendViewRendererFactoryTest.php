@@ -8,11 +8,11 @@
 namespace ZendTest\Expressive\ZendView;
 
 use Interop\Container\ContainerInterface;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
+use Prophecy\Prophecy\ProphecyInterface;
 use ReflectionProperty;
 use Zend\Expressive\Helper;
-use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Template\TemplatePath;
 use Zend\Expressive\ZendView\ServerUrlHelper;
 use Zend\Expressive\ZendView\UrlHelper;
@@ -26,9 +26,14 @@ use Zend\View\Resolver\TemplateMapResolver;
 class ZendViewRendererFactoryTest extends TestCase
 {
     /**
-     * @var ContainerInterface
+     * @var ContainerInterface|ProphecyInterface
     */
     private $container;
+
+    public function setUp()
+    {
+        $this->container = $this->prophesize(ContainerInterface::class);
+    }
 
     public function getConfigurationPaths()
     {
@@ -87,11 +92,6 @@ class ZendViewRendererFactoryTest extends TestCase
             }
         }
         $this->assertContains($expected, $found, $message);
-    }
-
-    public function setUp()
-    {
-        $this->container = $this->prophesize(ContainerInterface::class);
     }
 
     public function fetchPhpRenderer(ZendViewRenderer $view)
@@ -236,7 +236,6 @@ class ZendViewRendererFactoryTest extends TestCase
 
     public function testInjectsCustomHelpersIntoHelperManager()
     {
-        $router = $this->prophesize(RouterInterface::class)->reveal();
         $this->container->has('config')->willReturn(false);
         $this->container->has(HelperPluginManager::class)->willReturn(false);
         $this->injectBaseHelpers();
@@ -255,7 +254,6 @@ class ZendViewRendererFactoryTest extends TestCase
 
     public function testWillUseHelperManagerFromContainer()
     {
-        $router = $this->prophesize(RouterInterface::class)->reveal();
         $this->container->has('config')->willReturn(false);
         $this->injectBaseHelpers();
 

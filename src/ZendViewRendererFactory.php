@@ -10,7 +10,6 @@ namespace Zend\Expressive\ZendView;
 use Interop\Container\ContainerInterface;
 use Zend\Expressive\Helper\ServerUrlHelper as BaseServerUrlHelper;
 use Zend\Expressive\Helper\UrlHelper as BaseUrlHelper;
-use Zend\Expressive\Router\RouterInterface;
 use Zend\View\HelperPluginManager;
 use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Resolver;
