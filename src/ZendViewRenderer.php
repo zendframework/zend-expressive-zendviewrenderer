@@ -279,6 +279,8 @@ class ZendViewRenderer implements TemplateRendererInterface
                 return $resolver;
             }
         }
+
+        return null;
     }
 
     /**
