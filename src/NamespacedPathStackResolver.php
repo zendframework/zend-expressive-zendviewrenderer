@@ -143,7 +143,7 @@ class NamespacedPathStackResolver extends TemplatePathStack
      * @param  string $name
      * @param  null|RendererInterface $renderer
      * @return string
-     * @throws Exception\DomainException
+     * @throws ViewException\DomainException
      */
     public function resolve($name, RendererInterface $renderer = null)
     {
@@ -157,7 +157,7 @@ class NamespacedPathStackResolver extends TemplatePathStack
         $this->lastLookupFailure = false;
 
         if ($this->isLfiProtectionOn() && preg_match('#\.\.[\\\/]#', $template)) {
-            throw new Exception\DomainException(
+            throw new ViewException\DomainException(
                 'Requested scripts may not include parent directory traversal ("../", "..\\" notation)'
             );
         }
