@@ -7,13 +7,19 @@
 
 namespace ZendTest\Expressive\ZendView;
 
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
+use Prophecy\Prophecy\ProphecyInterface;
 use Psr\Http\Message\UriInterface;
 use Zend\Expressive\Helper\ServerUrlHelper as BaseHelper;
 use Zend\Expressive\ZendView\ServerUrlHelper;
 
 class ServerUrlHelperTest extends TestCase
 {
+    /**
+     * @var BaseHelper|ProphecyInterface
+     */
+    private $baseHelper;
+
     public function setUp()
     {
         $this->baseHelper = $this->prophesize(BaseHelper::class);

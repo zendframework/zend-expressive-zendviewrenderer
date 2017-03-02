@@ -10,7 +10,6 @@ namespace Zend\Expressive\ZendView;
 use Interop\Container\ContainerInterface;
 use Zend\Expressive\Helper\ServerUrlHelper as BaseServerUrlHelper;
 use Zend\Expressive\Helper\UrlHelper as BaseUrlHelper;
-use Zend\Expressive\Router\RouterInterface;
 use Zend\View\HelperPluginManager;
 use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Resolver;
@@ -49,7 +48,7 @@ class ZendViewRendererFactory
 {
     /**
      * @param ContainerInterface $container
-     * @returns ZendViewRenderer
+     * @return ZendViewRenderer
      */
     public function __invoke(ContainerInterface $container)
     {
@@ -95,6 +94,8 @@ class ZendViewRendererFactory
      *
      * @param PhpRenderer $renderer
      * @param ContainerInterface $container
+     * @return void
+     * @throws Exception\MissingHelperException
      */
     private function injectHelpers(PhpRenderer $renderer, ContainerInterface $container)
     {
