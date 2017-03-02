@@ -7,8 +7,8 @@
 
 namespace ZendTest\Expressive\ZendView;
 
-use Interop\Container\ContainerInterface;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
+use Prophecy\Prophecy\ProphecyInterface;
 use Zend\Expressive\ZendView\HelperPluginManagerFactory;
 use Zend\ServiceManager\ServiceManager;
 use Zend\View\HelperPluginManager;
@@ -17,8 +17,8 @@ use ZendTest\Expressive\ZendView\TestAsset\TestHelper;
 class HelperPluginManagerFactoryTest extends TestCase
 {
     /**
-     * @var ContainerInterface
-    */
+     * @var ServiceManager|ProphecyInterface
+     */
     private $container;
 
     public function setUp()

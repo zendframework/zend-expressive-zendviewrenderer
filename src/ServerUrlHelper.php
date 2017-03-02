@@ -45,6 +45,7 @@ class ServerUrlHelper extends AbstractHelper
     /**
      * Proxies to `Zend\Expressive\Helper\ServerUrlHelper::setUri()`
      * @param UriInterface $uri
+     * @return void
      */
     public function setUri(UriInterface $uri)
     {

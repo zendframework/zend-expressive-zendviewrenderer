@@ -121,7 +121,7 @@ class ZendViewRenderer implements TemplateRendererInterface
      */
     public function render($name, $params = [])
     {
-        $viewModel = ($params instanceof ModelInterface)
+        $viewModel = $params instanceof ModelInterface
             ? $this->mergeViewModel($name, $params)
             : $this->createModel($name, $params);
 
@@ -138,6 +138,7 @@ class ZendViewRenderer implements TemplateRendererInterface
      *
      * @param string $path
      * @param string $namespace
+     * @return void
      */
     public function addPath($path, $namespace = null)
     {
@@ -233,7 +234,7 @@ class ZendViewRenderer implements TemplateRendererInterface
     /**
      * Get the default resolver
      *
-     * @return NamespacedPathStackResolver
+     * @return AggregateResolver
      */
     private function getDefaultResolver()
     {
@@ -248,6 +249,7 @@ class ZendViewRenderer implements TemplateRendererInterface
      * A priority of 0 is used, to ensure it is the last queried.
      *
      * @param AggregateResolver $aggregate
+     * @return void
      */
     private function injectNamespacedResolver(AggregateResolver $aggregate)
     {
@@ -280,6 +282,8 @@ class ZendViewRenderer implements TemplateRendererInterface
                 return $resolver;
             }
         }
+
+        return null;
     }
 
     /**
