@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 1.3.0 - TBD
+
+### Added
+
+- [#23](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/23)
+  adds the ability to disable layouts either globally or when rendering. Disable
+  globally by setting the default `layout` parameter to boolean `false`:
+
+  ```php
+  $renderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'layout', false);
+  ```
+
+  Or do so when rendering, by passing the template variable `layout` with a
+  boolean `false` value:
+
+  ```php
+  $renderer->render($templateName, [
+      'layout' => false,
+      // other template variables
+  ]);
+  ```
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 1.2.2 - TBD
 
 ### Added

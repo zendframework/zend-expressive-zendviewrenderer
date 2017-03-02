@@ -34,4 +34,4 @@ To use view helpers, the `ZendViewRendererFactory`:
 
 ## Documentation
 
-See the Expressive [ZF View documentation](https://docs.zendframework.com/zend-expressive/features/template/zend-view/).
+Browse online at https://docs.zendframework.com/zend-expressive/features/template/zend-view/.
