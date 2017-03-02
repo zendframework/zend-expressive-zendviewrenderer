@@ -11,6 +11,7 @@ use ArrayObject;
 use PHPUnit_Framework_TestCase as TestCase;
 use Zend\Expressive\Template\Exception\InvalidArgumentException;
 use Zend\Expressive\Template\TemplatePath;
+use Zend\Expressive\Template\TemplateRendererInterface;
 use Zend\Expressive\ZendView\ZendViewRenderer;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
@@ -270,6 +271,51 @@ class ZendViewRendererTest extends TestCase
         $content = str_replace('<?php echo $name ?>', $name, $content);
         $this->assertContains($content, $result);
         $this->assertContains('<title>ALTERNATE LAYOUT PAGE</title>', $result);
+    }
+
+    /**
+     * @group layout
+     */
+    public function testDisableLayoutOnRender()
+    {
+        $layout = new ViewModel();
+        $layout->setTemplate('zendview-layout');
+
+        $renderer = new ZendViewRenderer(null, $layout);
+        $renderer->addPath(__DIR__ . '/TestAsset');
+
+        $name = 'zendview';
+        $rendered = $renderer->render('zendview', [
+            'layout' => false,
+            'name'   => $name,
+        ]);
+
+        $expected = file_get_contents(__DIR__ . '/TestAsset/zendview.phtml');
+        $expected = str_replace('<?php echo $name ?>', $name, $expected);
+
+        $this->assertEquals($rendered, $expected);
+    }
+
+    /**
+     * @group layout
+     */
+    public function testDisableLayoutViaDefaultParameter()
+    {
+        $layout = new ViewModel();
+        $layout->setTemplate('zendview-layout');
+
+        $renderer = new ZendViewRenderer(null, $layout);
+        $renderer->addPath(__DIR__ . '/TestAsset');
+        $renderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'layout', false);
+
+
+        $name = 'zendview';
+        $rendered = $renderer->render('zendview', [ 'name' => $name ]);
+
+        $expected = file_get_contents(__DIR__ . '/TestAsset/zendview.phtml');
+        $expected = str_replace('<?php echo $name ?>', $name, $expected);
+
+        $this->assertEquals($rendered, $expected);
     }
 
     /**
