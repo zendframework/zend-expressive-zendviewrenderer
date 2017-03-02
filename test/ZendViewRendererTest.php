@@ -8,7 +8,7 @@
 namespace ZendTest\Expressive\ZendView;
 
 use ArrayObject;
-use PHPUnit_Framework_TestCase as TestCase;
+use PHPUnit\Framework\TestCase;
 use Zend\Expressive\Template\Exception\InvalidArgumentException;
 use Zend\Expressive\Template\TemplatePath;
 use Zend\Expressive\ZendView\ZendViewRenderer;
@@ -30,8 +30,8 @@ class ZendViewRendererTest extends TestCase
 
     public function setUp()
     {
-        $this->resolver = new TemplatePathStack;
-        $this->render = new PhpRenderer;
+        $this->resolver = new TemplatePathStack();
+        $this->render = new PhpRenderer();
         $this->render->setResolver($this->resolver);
     }
 
@@ -85,7 +85,8 @@ class ZendViewRendererTest extends TestCase
 
     public function testInstantiatingWithInvalidLayout()
     {
-        $this->setExpectedException(InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
+
         new ZendViewRenderer(null, []);
     }
 
@@ -95,7 +96,7 @@ class ZendViewRendererTest extends TestCase
         $renderer->addPath(__DIR__ . '/TestAsset');
         $paths = $renderer->getPaths();
         $this->assertInternalType('array', $paths);
-        $this->assertEquals(1, count($paths));
+        $this->assertCount(1, $paths);
         $this->assertTemplatePath(__DIR__ . '/TestAsset' . DIRECTORY_SEPARATOR, $paths[0]);
         $this->assertTemplatePathString(__DIR__ . '/TestAsset' . DIRECTORY_SEPARATOR, $paths[0]);
         $this->assertEmptyTemplatePathNamespace($paths[0]);
@@ -107,7 +108,7 @@ class ZendViewRendererTest extends TestCase
         $renderer->addPath(__DIR__ . '/TestAsset', 'test');
         $paths = $renderer->getPaths();
         $this->assertInternalType('array', $paths);
-        $this->assertEquals(1, count($paths));
+        $this->assertCount(1, $paths);
         $this->assertTemplatePath(__DIR__ . '/TestAsset' . DIRECTORY_SEPARATOR, $paths[0]);
         $this->assertTemplatePathString(__DIR__ . '/TestAsset' . DIRECTORY_SEPARATOR, $paths[0]);
         $this->assertTemplatePathNamespace('test', $paths[0]);
@@ -140,11 +141,14 @@ class ZendViewRendererTest extends TestCase
 
     /**
      * @dataProvider invalidParameterValues
+     *
+     * @param mixed $params
      */
     public function testRenderRaisesExceptionForInvalidParameterTypes($params)
     {
         $renderer = new ZendViewRenderer();
-        $this->setExpectedException(InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
+
         $renderer->render('foo', $params);
     }
 
@@ -172,6 +176,9 @@ class ZendViewRendererTest extends TestCase
 
     /**
      * @dataProvider objectParameterValues
+     *
+     * @param object $params
+     * @param string $search
      */
     public function testCanRenderWithParameterObjects($params, $search)
     {
@@ -197,7 +204,7 @@ class ZendViewRendererTest extends TestCase
         $content = file_get_contents(__DIR__ . '/TestAsset/zendview.phtml');
         $content = str_replace('<?php echo $name ?>', $name, $content);
         $this->assertContains($content, $result);
-        $this->assertContains('<title>Layout Page</title>', $result, sprintf("Received %s", $result));
+        $this->assertContains('<title>Layout Page</title>', $result, sprintf('Received %s', $result));
     }
 
     /**
@@ -250,7 +257,7 @@ class ZendViewRendererTest extends TestCase
         $content = file_get_contents(__DIR__ . '/TestAsset/zendview.phtml');
         $content = str_replace('<?php echo $name ?>', $name, $content);
         $this->assertContains($content, $result);
-        $this->assertContains('<title>Layout Page</title>', $result, sprintf("Received %s", $result));
+        $this->assertContains('<title>Layout Page</title>', $result, sprintf('Received %s', $result));
     }
 
     /**
@@ -345,6 +352,8 @@ class ZendViewRendererTest extends TestCase
 
     /**
      * @dataProvider useArrayOrViewModel
+     *
+     * @param bool $viewAsModel
      */
     public function testOverrideSharedParametersAtRender($viewAsModel)
     {
