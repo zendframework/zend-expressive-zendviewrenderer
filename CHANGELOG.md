@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 1.4.0 - TBD
+
+### Added
+
+- [#36](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/36)
+  adds support for zend-expressive-helpers 4.0.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 1.3.1 - TBD
 
 ### Added
