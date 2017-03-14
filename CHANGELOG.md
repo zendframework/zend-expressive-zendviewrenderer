@@ -6,7 +6,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- [#36](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/36)
+  adds support for zend-expressive-helpers 4.0.
 
 ### Deprecated
 
