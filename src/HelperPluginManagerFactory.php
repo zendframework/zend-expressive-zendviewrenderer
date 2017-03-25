@@ -7,7 +7,7 @@
 
 namespace Zend\Expressive\ZendView;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Zend\ServiceManager\Config;
 use Zend\View\HelperPluginManager;
 
