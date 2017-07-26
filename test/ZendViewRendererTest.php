@@ -208,6 +208,44 @@ class ZendViewRendererTest extends TestCase
         $this->assertContains('<title>Layout Page</title>', $result, sprintf('Received %s', $result));
     }
 
+    public function testSharedParameterIsAvailableInLayout()
+    {
+        $renderer = new ZendViewRenderer(null, 'zendview-layout-variable');
+        $renderer->addPath(__DIR__ . '/TestAsset');
+        $title = uniqid('ZendViewTitle', true);
+        $renderer->addDefaultParam($renderer::TEMPLATE_ALL, 'title', $title);
+
+        $name = uniqid('ZendViewName', true);
+        $result = $renderer->render('zendview', ['name' => $name]);
+
+        $this->assertContains($title, $result);
+        $this->assertContains($name, $result);
+        $content = file_get_contents(__DIR__ . '/TestAsset/zendview.phtml');
+        $content = str_replace('<?php echo $name ?>', $name, $content);
+        $this->assertContains($content, $result);
+        $expected = sprintf('<title>Layout Page: %s</title>', $title);
+        $this->assertContains($expected, $result, sprintf('Received %s', $result));
+    }
+
+    public function testTemplateDefaultParameterIsNotAvailableInLayout()
+    {
+        $renderer = new ZendViewRenderer(null, 'zendview-layout-variable');
+        $renderer->addPath(__DIR__ . '/TestAsset');
+        $title = uniqid('ZendViewTitle', true);
+        $renderer->addDefaultParam('zendview', 'title', $title);
+
+        $name = uniqid('ZendViewName', true);
+        $result = $renderer->render('zendview', ['name' => $name]);
+
+        $this->assertNotContains($title, $result);
+        $this->assertContains($name, $result);
+        $content = file_get_contents(__DIR__ . '/TestAsset/zendview.phtml');
+        $content = str_replace('<?php echo $name ?>', $name, $content);
+        $this->assertContains($content, $result);
+        $expected = sprintf('<title>Layout Page: %s</title>', '');
+        $this->assertContains($expected, $result, sprintf('Received %s', $result));
+    }
+
     /**
      * @group layout
      */
