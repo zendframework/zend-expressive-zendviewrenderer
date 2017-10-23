@@ -430,7 +430,7 @@ class ZendViewRendererTest extends TestCase
         $content = str_replace('<?php echo $name ?>', 'Zend', $content);
         $this->assertEquals($content, $result);
     }
-    
+
     public function testCanRenderWithChildViewModel()
     {
         $path = __DIR__ . '/TestAsset';
