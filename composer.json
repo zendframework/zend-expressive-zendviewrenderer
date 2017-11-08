@@ -12,15 +12,6 @@
         "zendframework",
         "zend-expressive"
     ],
-    "config": {
-        "sort-packages": true
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.4-dev",
-            "dev-develop": "1.5-dev"
-        }
-    },
     "support": {
         "issues": "https://github.com/zendframework/zend-expressive-zendviewrenderer/issues",
         "source": "https://github.com/zendframework/zend-expressive-zendviewrenderer",
@@ -53,6 +44,15 @@
             "ZendTest\\Expressive\\ZendView\\": "test/"
         }
     },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.4-dev",
+            "dev-develop": "1.5-dev"
+        }
+    },
     "scripts": {
         "check": [
             "@license-check",
@@ -64,6 +64,6 @@
         "test": "phpunit --colors=always",
         "test-coverage": "phpunit --colors=always --coverage-clover clover.xml",
         "upload-coverage": "coveralls -v",
-        "license-check": "vendor/bin/docheader check src/ test/"
+        "license-check": "docheader check src/ test/"
     }
 }
