@@ -6,7 +6,9 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- [#46](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/46)
+  adds support for the zend-expressive-template v2 series,
+  zend-expressive-router v3 series, and zend-expressive-helpers v5 series.
 
 ### Changed
 
@@ -15,13 +17,28 @@ All notable changes to this project will be documented in this file, in reverse 
   container-interop exceptions now extend from PSR-11 exception interfaces,
   and factories typehint against the PSR-11 `ContainerInterface`.
 
+- [#46](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/46)
+  updates all classes to use scalar and return type hints, including nullable
+  and void types. If you were extending classes from this package, you may need
+  to update signatures of methods you override.
+
 ### Deprecated
 
 - Nothing.
 
 ### Removed
 
-- Nothing.
+- [#46](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/46)
+  removes support for PHP versions prior to PHP 7.1.
+
+- [#46](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/46)
+  removes support for zend-expressive-template versions prior to v2.
+
+- [#46](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/46)
+  removes support for zend-expressive-router versions prior to v3.
+
+- [#46](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/46)
+  removes support for zend-expressive-helpers versions prior to v5.
 
 ### Fixed
 
