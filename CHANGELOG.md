@@ -45,7 +45,11 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
+- [#43](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/43)
+  ensures that if a view model provided to the renderer contains child view
+  models, then it will properly merge variables pulled from the child model.
+  Previously, an error would occur due to an attempt to merge either a null or
+  an object where it expected an array.
 
 ## 1.4.0 - 2017-03-14
 

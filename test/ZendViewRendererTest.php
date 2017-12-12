@@ -468,4 +468,32 @@ class ZendViewRendererTest extends TestCase
         $content = str_replace('<?php echo $name ?>', 'Zend', $content);
         $this->assertEquals($content, $result);
     }
+
+    public function testCanRenderWithChildViewModel()
+    {
+        $path = __DIR__ . '/TestAsset';
+        $renderer = new ZendViewRenderer();
+        $renderer->addPath($path);
+
+        $viewModelChild = new ViewModel();
+        $viewModelChild->setTemplate('zendview-null');
+
+        $viewModelParent = new ViewModel();
+        $viewModelParent->setVariables([
+            'layout' => 'zendview-layout',
+        ]);
+        $viewModelParent->addChild($viewModelChild, 'name');
+
+        $result = $renderer->render('zendview', $viewModelParent);
+
+        $content             = file_get_contents(sprintf('%s/zendview-null.phtml', $path));
+        $contentParent       = file_get_contents(sprintf('%s/zendview.phtml', $path));
+        $contentParentLayout = file_get_contents(sprintf('%s/zendview-layout.phtml', $path));
+
+        // trim is used here, because rendering engine is trimming content too
+        $content = trim(str_replace('<?php echo $name ?>', $content, $contentParent));
+        $content = str_replace('<?= $this->content ?>', $content, $contentParentLayout);
+
+        $this->assertEquals($content, $result);
+    }
 }
