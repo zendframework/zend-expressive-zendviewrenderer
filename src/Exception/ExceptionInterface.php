@@ -7,6 +7,8 @@
 
 namespace Zend\Expressive\ZendView\Exception;
 
-interface ExceptionInterface
+use Zend\Expressive\Template\Exception\ExceptionInterface as TemplateExceptionInterface;
+
+interface ExceptionInterface extends TemplateExceptionInterface
 {
 }
