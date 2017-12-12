@@ -33,7 +33,7 @@ class ServerUrlHelper extends AbstractHelper
      *
      * Proxies to `Zend\Expressive\Helper\ServerUrlHelper::generate()`.
      */
-    public function __invoke(?string $path = null) : string
+    public function __invoke(string $path = null) : string
     {
         return $this->helper->generate($path);
     }

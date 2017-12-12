@@ -29,7 +29,7 @@ use Zend\View\Resolver\TemplatePathStack;
  */
 class NamespacedPathStackResolver extends TemplatePathStack
 {
-    const DEFAULT_NAMESPACE = '__DEFAULT__';
+    public const DEFAULT_NAMESPACE = '__DEFAULT__';
 
     /**
      * @var array
