@@ -1,7 +1,7 @@
 # zend-view PhpRenderer Integration for Expressive
 
 [![Build Status](https://secure.travis-ci.org/zendframework/zend-expressive-zendviewrenderer.svg?branch=master)](https://secure.travis-ci.org/zendframework/zend-expressive-zendviewrenderer)
-[![Coverage Status](https://coveralls.io/repos/zendframework/zend-expressive-zendviewrenderer/badge.svg?branch=master)](https://coveralls.io/r/zendframework/zend-expressive-zendviewrenderer?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/zendframework/zend-expressive-zendviewrenderer/badge.svg?branch=master)](https://coveralls.io/github/zendframework/zend-expressive-zendviewrenderer?branch=master)
 
 [zend-view PhpRenderer](https://github.com/zendframework/zend-view) integration
 for [Expressive](https://github.com/zendframework/zend-expressive).
