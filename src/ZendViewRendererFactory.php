@@ -7,7 +7,7 @@
 
 namespace Zend\Expressive\ZendView;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Zend\Expressive\Helper\ServerUrlHelper as BaseServerUrlHelper;
 use Zend\Expressive\Helper\UrlHelper as BaseUrlHelper;
 use Zend\View\HelperPluginManager;
