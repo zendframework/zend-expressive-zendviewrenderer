@@ -1,12 +1,15 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-expressive-zendviewrenderer for the canonical source repository
- * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
 
+declare(strict_types=1);
+
 namespace Zend\Expressive\ZendView;
 
+use Interop\Container\ContainerInterface as InteropContainerInterface;
 use Psr\Container\ContainerInterface;
 use Zend\Expressive\Helper\ServerUrlHelper as BaseServerUrlHelper;
 use Zend\Expressive\Helper\UrlHelper as BaseUrlHelper;
@@ -46,11 +49,7 @@ use Zend\View\Resolver;
  */
 class ZendViewRendererFactory
 {
-    /**
-     * @param ContainerInterface $container
-     * @return ZendViewRenderer
-     */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container) : ZendViewRenderer
     {
         $config   = $container->has('config') ? $container->get('config') : [];
         $config   = isset($config['templates']) ? $config['templates'] : [];
@@ -94,17 +93,13 @@ class ZendViewRendererFactory
      *
      * In each case, injects with the custom url/serverurl implementations.
      *
-     * @param PhpRenderer $renderer
-     * @param ContainerInterface $container
-     * @return void
+     * @throws Exception\InvalidContainerException if the $container argument
+     *     does not implement InteropContainerInterface.
      * @throws Exception\MissingHelperException
      */
-    private function injectHelpers(PhpRenderer $renderer, ContainerInterface $container)
+    private function injectHelpers(PhpRenderer $renderer, ContainerInterface $container) : void
     {
-        $helpers = $container->has(HelperPluginManager::class)
-            ? $container->get(HelperPluginManager::class)
-            : new HelperPluginManager($container);
-
+        $helpers = $this->retrieveHelperManager($container);
         $helpers->setAlias('url', BaseUrlHelper::class);
         $helpers->setAlias('Url', BaseUrlHelper::class);
         $helpers->setFactory(BaseUrlHelper::class, function () use ($container) {
@@ -131,5 +126,30 @@ class ZendViewRendererFactory
         });
 
         $renderer->setHelperPluginManager($helpers);
+    }
+
+    /**
+     * @throws Exception\InvalidContainerException if the $container argument
+     *     does not implement InteropContainerInterface.
+     */
+    private function retrieveHelperManager(ContainerInterface $container) : HelperPluginManager
+    {
+        if ($container->has(HelperPluginManager::class)) {
+            return $container->get(HelperPluginManager::class);
+        }
+
+        if (! $container instanceof InteropContainerInterface) {
+            throw new Exception\InvalidContainerException(sprintf(
+                '%s expects a %s instance to its constructor; however, your service'
+                . ' container is an instance of %s, which does not implement that'
+                . ' interface. Consider switching to zend-servicemanager for your'
+                . ' container implementation if you wish to use the zend-view renderer.',
+                HelperPluginManager::class,
+                InteropContainerInterface::class,
+                get_class($container)
+            ));
+        }
+
+        return new HelperPluginManager($container);
     }
 }

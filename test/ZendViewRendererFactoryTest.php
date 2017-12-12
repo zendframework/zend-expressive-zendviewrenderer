@@ -1,9 +1,11 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-expressive-zendviewrenderer for the canonical source repository
- * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace ZendTest\Expressive\ZendView;
 
@@ -11,9 +13,11 @@ use Interop\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophecy\ProphecyInterface;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 use ReflectionProperty;
 use Zend\Expressive\Helper;
 use Zend\Expressive\Template\TemplatePath;
+use Zend\Expressive\ZendView\Exception\InvalidContainerException;
 use Zend\Expressive\ZendView\ServerUrlHelper;
 use Zend\Expressive\ZendView\UrlHelper;
 use Zend\Expressive\ZendView\ZendViewRenderer;
@@ -194,7 +198,7 @@ class ZendViewRendererFactoryTest extends TestCase
 
         $dirSlash = DIRECTORY_SEPARATOR;
         // @codingStandardsIgnoreStart
-        $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/bar' . $dirSlash, 'foo', $paths, var_export($paths, 1));
+        $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/bar' . $dirSlash, 'foo', $paths, var_export($paths, true));
         $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/baz' . $dirSlash, 'bar', $paths);
         $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/bat' . $dirSlash, 'bar', $paths);
         $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/one' . $dirSlash, null, $paths);
@@ -301,5 +305,20 @@ class ZendViewRendererFactoryTest extends TestCase
 
         $composed = $this->fetchPhpRenderer($view);
         $this->assertSame($engine, $composed);
+    }
+
+    public function testWillRaiseExceptionIfContainerDoesNotImplementInteropContainerInterface()
+    {
+        $container = $this->prophesize(PsrContainerInterface::class);
+        $container->has('config')->willReturn(false);
+        $container->get('config')->shouldNotBeCalled();
+        $container->has(PhpRenderer::class)->willReturn(false);
+        $container->get(PhpRenderer::class)->shouldNotBeCalled();
+        $container->has(HelperPluginManager::class)->willReturn(false);
+
+        $factory = new ZendViewRendererFactory();
+
+        $this->expectException(InvalidContainerException::class);
+        $factory($container->reveal());
     }
 }
