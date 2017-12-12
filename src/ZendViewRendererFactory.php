@@ -62,8 +62,10 @@ class ZendViewRendererFactory
             100
         );
 
-        // Create the renderer
-        $renderer = new PhpRenderer();
+        // Create or retrieve the renderer from the container
+        $renderer = ($container->has(PhpRenderer::class))
+            ? $container->get(PhpRenderer::class)
+            : new PhpRenderer();
         $renderer->setResolver($resolver);
 
         // Inject helpers

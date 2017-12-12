@@ -24,7 +24,10 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- [#39](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/39)
+  adds the ability for the `ZendViewRendererFactory` to use the
+  `Zend\View\Renderer\PhpRenderer` service when present, defaulting to creating
+  an unconfigured instance if none is available (previous behavior).
 
 ### Deprecated
 
