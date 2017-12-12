@@ -22,6 +22,10 @@ All notable changes to this project will be documented in this file, in reverse 
   and void types. If you were extending classes from this package, you may need
   to update signatures of methods you override.
 
+- [#45](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/45)
+  updates the `ExceptionInterface` to extend from the `ExceptionInterface`
+  provided in zend-expressive-template.
+
 ### Deprecated
 
 - Nothing.
