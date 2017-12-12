@@ -20,6 +20,7 @@ use Zend\Expressive\ZendView\ZendViewRenderer;
 use Zend\Expressive\ZendView\ZendViewRendererFactory;
 use Zend\View\HelperPluginManager;
 use Zend\View\Model\ModelInterface;
+use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Resolver\AggregateResolver;
 use Zend\View\Resolver\TemplateMapResolver;
 
@@ -125,6 +126,7 @@ class ZendViewRendererFactoryTest extends TestCase
     {
         $this->container->has('config')->willReturn(false);
         $this->container->has(HelperPluginManager::class)->willReturn(false);
+        $this->container->has(PhpRenderer::class)->willReturn(false);
         $this->injectBaseHelpers();
         $factory = new ZendViewRendererFactory();
         $view    = $factory($this->container->reveal());
@@ -154,6 +156,7 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->container->has('config')->willReturn(true);
         $this->container->get('config')->willReturn($config);
         $this->container->has(HelperPluginManager::class)->willReturn(false);
+        $this->container->has(PhpRenderer::class)->willReturn(false);
         $this->injectBaseHelpers();
         $factory = new ZendViewRendererFactory();
         $view = $factory($this->container->reveal());
@@ -175,6 +178,7 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->container->has('config')->willReturn(true);
         $this->container->get('config')->willReturn($config);
         $this->container->has(HelperPluginManager::class)->willReturn(false);
+        $this->container->has(PhpRenderer::class)->willReturn(false);
         $this->injectBaseHelpers();
         $factory = new ZendViewRendererFactory();
         $view = $factory($this->container->reveal());
@@ -212,6 +216,7 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->container->has('config')->willReturn(true);
         $this->container->get('config')->willReturn($config);
         $this->container->has(HelperPluginManager::class)->willReturn(false);
+        $this->container->has(PhpRenderer::class)->willReturn(false);
         $this->injectBaseHelpers();
         $factory = new ZendViewRendererFactory();
         $view = $factory($this->container->reveal());
@@ -238,6 +243,7 @@ class ZendViewRendererFactoryTest extends TestCase
     {
         $this->container->has('config')->willReturn(false);
         $this->container->has(HelperPluginManager::class)->willReturn(false);
+        $this->container->has(PhpRenderer::class)->willReturn(false);
         $this->injectBaseHelpers();
         $factory = new ZendViewRendererFactory();
         $view    = $factory($this->container->reveal());
@@ -255,6 +261,7 @@ class ZendViewRendererFactoryTest extends TestCase
     public function testWillUseHelperManagerFromContainer()
     {
         $this->container->has('config')->willReturn(false);
+        $this->container->has(PhpRenderer::class)->willReturn(false);
         $this->injectBaseHelpers();
 
         $helpers = new HelperPluginManager($this->container->reveal());
@@ -280,5 +287,19 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->assertTrue($helpers->has('serverurl'));
         $this->assertInstanceOf(UrlHelper::class, $helpers->get('url'));
         $this->assertInstanceOf(ServerUrlHelper::class, $helpers->get('serverurl'));
+    }
+
+    public function testWillUseRendererFromContainer()
+    {
+        $engine = new PhpRenderer;
+        $this->container->has('config')->willReturn(false);
+        $this->container->has(HelperPluginManager::class)->willReturn(false);
+        $this->injectContainerService(PhpRenderer::class, $engine);
+
+        $factory = new ZendViewRendererFactory();
+        $view = $factory($this->container->reveal());
+
+        $composed = $this->fetchPhpRenderer($view);
+        $this->assertSame($engine, $composed);
     }
 }
