@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.0.0alpha1 - TBD
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- [#37](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/37)
+  adds support for PSR-11. All exception types that previously extended from
+  container-interop exceptions now extend from PSR-11 exception interfaces,
+  and factories typehint against the PSR-11 `ContainerInterface`.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- Nothing.
+
 ## 1.5.0 - TBD
 
 ### Added
