@@ -1,9 +1,11 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-expressive-zendviewrenderer for the canonical source repository
- * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Expressive\ZendView;
 
@@ -28,10 +30,6 @@ class UrlHelper extends AbstractHelper
     /**
      * Proxies to `Zend\Expressive\Helper\UrlHelper::generate()`
      *
-     * @param null|string $routeName
-     * @param array $routeParams
-     * @param array $queryParams
-     * @param null|string $fragmentIdentifier
      * @param array $options Can have the following keys:
      *     - router (array): contains options to be passed to the router
      *     - reuse_result_params (bool): indicates if the current RouteResult
@@ -39,10 +37,10 @@ class UrlHelper extends AbstractHelper
      * @return string
      */
     public function __invoke(
-        $routeName = null,
+        ?string $routeName = null,
         array $routeParams = [],
         array $queryParams = [],
-        $fragmentIdentifier = null,
+        ?string $fragmentIdentifier = null,
         array $options = []
     ) {
         return $this->helper->generate($routeName, $routeParams, $queryParams, $fragmentIdentifier, $options);

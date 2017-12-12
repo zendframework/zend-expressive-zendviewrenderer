@@ -1,9 +1,11 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-expressive-zendviewrenderer for the canonical source repository
- * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Expressive\ZendView;
 
@@ -115,11 +117,9 @@ class ZendViewRenderer implements TemplateRendererInterface
      * Layouts specified with $params take precedence over layouts passed to
      * the constructor.
      *
-     * @param string $name
      * @param array|ModelInterface|object $params
-     * @return string
      */
-    public function render($name, $params = [])
+    public function render(string $name, $params = []) : string
     {
         $viewModel = $params instanceof ModelInterface
             ? $this->mergeViewModel($name, $params)
@@ -135,12 +135,8 @@ class ZendViewRenderer implements TemplateRendererInterface
 
     /**
      * Add a path for templates.
-     *
-     * @param string $path
-     * @param string $namespace
-     * @return void
      */
-    public function addPath($path, $namespace = null)
+    public function addPath(string $path, string $namespace = null) : void
     {
         $this->resolver->addPath($path, $namespace);
     }
@@ -150,7 +146,7 @@ class ZendViewRenderer implements TemplateRendererInterface
      *
      * @return TemplatePath[]
      */
-    public function getPaths()
+    public function getPaths() : array
     {
         $paths = [];
 
@@ -188,12 +184,9 @@ class ZendViewRenderer implements TemplateRendererInterface
     /**
      * Do a recursive, depth-first rendering of a view model.
      *
-     * @param ModelInterface $model
-     * @param RendererInterface $renderer
-     * @return string
      * @throws Exception\RenderingException if it encounters a terminal child.
      */
-    private function renderModel(ModelInterface $model, RendererInterface $renderer)
+    private function renderModel(ModelInterface $model, RendererInterface $renderer) : string
     {
         foreach ($model as $child) {
             if ($child->terminate()) {
@@ -221,10 +214,8 @@ class ZendViewRenderer implements TemplateRendererInterface
 
     /**
      * Returns a PhpRenderer object
-     *
-     * @return PhpRenderer
      */
-    private function createRenderer()
+    private function createRenderer() : PhpRenderer
     {
         $renderer = new PhpRenderer();
         $renderer->setResolver($this->getDefaultResolver());
@@ -233,10 +224,8 @@ class ZendViewRenderer implements TemplateRendererInterface
 
     /**
      * Get the default resolver
-     *
-     * @return AggregateResolver
      */
-    private function getDefaultResolver()
+    private function getDefaultResolver() : AggregateResolver
     {
         $resolver = new AggregateResolver();
         $this->injectNamespacedResolver($resolver);
@@ -247,20 +236,13 @@ class ZendViewRenderer implements TemplateRendererInterface
      * Attaches a new NamespacedPathStackResolver to the AggregateResolver
      *
      * A priority of 0 is used, to ensure it is the last queried.
-     *
-     * @param AggregateResolver $aggregate
-     * @return void
      */
-    private function injectNamespacedResolver(AggregateResolver $aggregate)
+    private function injectNamespacedResolver(AggregateResolver $aggregate) : void
     {
         $aggregate->attach(new NamespacedPathStackResolver(), 0);
     }
 
-    /**
-     * @param AggregateResolver $aggregate
-     * @return bool
-     */
-    private function hasNamespacedResolver(AggregateResolver $aggregate)
+    private function hasNamespacedResolver(AggregateResolver $aggregate) : bool
     {
         foreach ($aggregate as $resolver) {
             if ($resolver instanceof NamespacedPathStackResolver) {
@@ -271,11 +253,7 @@ class ZendViewRenderer implements TemplateRendererInterface
         return false;
     }
 
-    /**
-     * @param AggregateResolver $aggregate
-     * @return null|NamespacedPathStackResolver
-     */
-    private function getNamespacedResolver(AggregateResolver $aggregate)
+    private function getNamespacedResolver(AggregateResolver $aggregate) : ?NamespacedPathStackResolver
     {
         foreach ($aggregate as $resolver) {
             if ($resolver instanceof NamespacedPathStackResolver) {
@@ -290,10 +268,8 @@ class ZendViewRenderer implements TemplateRendererInterface
      * Merge global/template parameters with provided view model.
      *
      * @param string $name Template name.
-     * @param ModelInterface $model
-     * @return ModelInterface
      */
-    private function mergeViewModel($name, ModelInterface $model)
+    private function mergeViewModel(string $name, ModelInterface $model) : ModelInterface
     {
         $params = $this->mergeParams(
             $name,
@@ -321,11 +297,8 @@ class ZendViewRenderer implements TemplateRendererInterface
      * Returns the provided $viewModel unchanged if no layout is discovered;
      * otherwise, a view model representing the layout, with the provided
      * view model as a child, is returned.
-     *
-     * @param ModelInterface $viewModel
-     * @return ModelInterface
      */
-    private function prepareLayout(ModelInterface $viewModel)
+    private function prepareLayout(ModelInterface $viewModel) : ModelInterface
     {
         $providedLayout = $viewModel->getVariable('layout', null);
         if (is_string($providedLayout) && ! empty($providedLayout)) {

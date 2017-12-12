@@ -1,9 +1,11 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-expressive-zendviewrenderer for the canonical source repository
- * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Expressive\ZendView;
 
@@ -46,11 +48,7 @@ use Zend\View\Resolver;
  */
 class ZendViewRendererFactory
 {
-    /**
-     * @param ContainerInterface $container
-     * @return ZendViewRenderer
-     */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container) : ZendViewRenderer
     {
         $config   = $container->has('config') ? $container->get('config') : [];
         $config   = isset($config['templates']) ? $config['templates'] : [];
@@ -94,12 +92,9 @@ class ZendViewRendererFactory
      *
      * In each case, injects with the custom url/serverurl implementations.
      *
-     * @param PhpRenderer $renderer
-     * @param ContainerInterface $container
-     * @return void
      * @throws Exception\MissingHelperException
      */
-    private function injectHelpers(PhpRenderer $renderer, ContainerInterface $container)
+    private function injectHelpers(PhpRenderer $renderer, ContainerInterface $container) : void
     {
         $helpers = $container->has(HelperPluginManager::class)
             ? $container->get(HelperPluginManager::class)
