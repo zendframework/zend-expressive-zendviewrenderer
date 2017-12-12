@@ -13,9 +13,11 @@ use Interop\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophecy\ProphecyInterface;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 use ReflectionProperty;
 use Zend\Expressive\Helper;
 use Zend\Expressive\Template\TemplatePath;
+use Zend\Expressive\ZendView\Exception\InvalidContainerException;
 use Zend\Expressive\ZendView\ServerUrlHelper;
 use Zend\Expressive\ZendView\UrlHelper;
 use Zend\Expressive\ZendView\ZendViewRenderer;
@@ -303,5 +305,20 @@ class ZendViewRendererFactoryTest extends TestCase
 
         $composed = $this->fetchPhpRenderer($view);
         $this->assertSame($engine, $composed);
+    }
+
+    public function testWillRaiseExceptionIfContainerDoesNotImplementInteropContainerInterface()
+    {
+        $container = $this->prophesize(PsrContainerInterface::class);
+        $container->has('config')->willReturn(false);
+        $container->get('config')->shouldNotBeCalled();
+        $container->has(PhpRenderer::class)->willReturn(false);
+        $container->get(PhpRenderer::class)->shouldNotBeCalled();
+        $container->has(HelperPluginManager::class)->willReturn(false);
+
+        $factory = new ZendViewRendererFactory();
+
+        $this->expectException(InvalidContainerException::class);
+        $factory($container->reveal());
     }
 }
