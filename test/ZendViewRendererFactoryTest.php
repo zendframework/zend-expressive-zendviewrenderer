@@ -20,9 +20,9 @@ use Zend\Expressive\ZendView\ZendViewRenderer;
 use Zend\Expressive\ZendView\ZendViewRendererFactory;
 use Zend\View\HelperPluginManager;
 use Zend\View\Model\ModelInterface;
+use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Resolver\AggregateResolver;
 use Zend\View\Resolver\TemplateMapResolver;
-use Zend\View\Renderer\PhpRenderer;
 
 class ZendViewRendererFactoryTest extends TestCase
 {
