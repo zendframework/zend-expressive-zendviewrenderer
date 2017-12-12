@@ -11,6 +11,12 @@ All notable changes to this project will be documented in this file, in reverse 
   `Zend\View\Renderer\PhpRenderer` service when present, defaulting to creating
   an unconfigured instance if none is available (previous behavior).
 
+### Changed
+
+- [#41](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/41)
+  updates the renderer to also inject the layout with any default parameters (vs
+  only the template requested).
+
 ### Deprecated
 
 - Nothing.
