@@ -37,10 +37,10 @@ class UrlHelper extends AbstractHelper
      * @return string
      */
     public function __invoke(
-        ?string $routeName = null,
+        string $routeName = null,
         array $routeParams = [],
         array $queryParams = [],
-        ?string $fragmentIdentifier = null,
+        string $fragmentIdentifier = null,
         array $options = []
     ) {
         return $this->helper->generate($routeName, $routeParams, $queryParams, $fragmentIdentifier, $options);
