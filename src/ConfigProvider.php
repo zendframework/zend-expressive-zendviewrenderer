@@ -38,7 +38,6 @@ class ConfigProvider
     public function getTemplates() : array
     {
         return [
-            'extension' => 'phtml',
             'paths' => [],
         ];
     }
