@@ -10,6 +10,14 @@ All notable changes to this project will be documented in this file, in reverse 
   adds support for the zend-expressive-template v2 series,
   zend-expressive-router v3 series, and zend-expressive-helpers v5 series.
 
+- [#47](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/47)
+  adds a `ConfigProvider` class with default service wiring and configuration
+  for the component. It also updates `composer.json` to add
+  `extra.zf.config-provider` configuration to notify zend-component-installer
+  of the shipped `ConfigProvider` class, allowing the plugin to inject the
+  `ConfigProvider` in your application configuration during initial
+  installation.
+
 ### Changed
 
 - [#37](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/37)
@@ -319,7 +327,7 @@ First stable release.
 - [#11](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/11)
   adds a factory for providing the `HelperPluginManager`, and support in the
   `ZendViewRendererFactory` for injecting the `HelperPluginManager` service
-  (using its FQCN) instead of instantiating one directly. 
+  (using its FQCN) instead of instantiating one directly.
 - [#13](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/13)
   adds `zendframework/zend-expressive-helpers` as a dependency, in order to
   consume its `UrlHelper` and `ServerUrlHelper` implementations.
