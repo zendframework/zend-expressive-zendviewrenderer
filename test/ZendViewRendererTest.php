@@ -268,7 +268,7 @@ class ZendViewRendererTest extends TestCase
         $this->assertContains($expected, $result, sprintf('Received %s', $result));
     }
 
-    public function testTemplateDefaultParameterIsAvailableInProvidedLayout()
+    public function testVariableInProvidedLayoutViewModelOverridesTemplateDefaultParameter()
     {
         $renderer = new ZendViewRenderer(null);
         $renderer->addPath(__DIR__ . '/TestAsset');
@@ -294,7 +294,7 @@ class ZendViewRendererTest extends TestCase
         $this->assertContains($expected, $result, sprintf('Received %s', $result));
     }
 
-    public function testTemplateDefaultParameterWhenNotProvidedInLayoutViewModel()
+    public function testTemplateDefaultParameterIsAvailableInLayoutProvidedWithViewModel()
     {
         $renderer = new ZendViewRenderer(null);
         $renderer->addPath(__DIR__ . '/TestAsset');
