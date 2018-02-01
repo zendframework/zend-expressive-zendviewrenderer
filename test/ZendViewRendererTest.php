@@ -294,6 +294,32 @@ class ZendViewRendererTest extends TestCase
         $this->assertContains($expected, $result, sprintf('Received %s', $result));
     }
 
+    public function testTemplateDefaultParameterWhenNotProvidedInLayoutViewModel()
+    {
+        $renderer = new ZendViewRenderer(null);
+        $renderer->addPath(__DIR__ . '/TestAsset');
+        $titleNotToBeOverriden = uniqid('ZendViewTitleNotToBeOverriden', true);
+        $title = uniqid('ZendViewTitle', true);
+        $name = uniqid('ZendViewName', true);
+        $renderer->addDefaultParam('zendview-layout-variable', 'title', $titleNotToBeOverriden);
+
+        $layout = new ViewModel();
+        $layout->setTemplate('zendview-layout-variable');
+        $result = $renderer->render('zendview', ['name' => $name, 'layout' => $layout]);
+        $this->assertContains($titleNotToBeOverriden, $result);
+        $this->assertContains($name, $result);
+
+        $content = file_get_contents(__DIR__ . '/TestAsset/zendview.phtml');
+        $content = str_replace('<?php echo $name ?>', $name, $content);
+        $layout = file_get_contents(__DIR__ . '/TestAsset/zendview-layout-variable.phtml');
+        $layout = str_replace('<?= $this->title ?>', $titleNotToBeOverriden, $layout);
+        $layout = str_replace('<?= $this->content ?>' . PHP_EOL, $content, $layout);
+        $this->assertContains($layout, $result);
+
+        $expected = sprintf('<title>Layout Page: %s</title>', $titleNotToBeOverriden);
+        $this->assertContains($expected, $result, sprintf('Received %s', $result));
+    }
+
     /**
      * @group layout
      */
