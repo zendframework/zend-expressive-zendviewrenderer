@@ -246,6 +246,28 @@ class ZendViewRendererTest extends TestCase
         $this->assertContains($expected, $result, sprintf('Received %s', $result));
     }
 
+    public function testTemplateDefaultParameterIsAvailableInLayout()
+    {
+        $renderer = new ZendViewRenderer(null, 'zendview-layout-variable');
+        $renderer->addPath(__DIR__ . '/TestAsset');
+        $title = uniqid('ZendViewTitle', true);
+        $name = uniqid('ZendViewName', true);
+        $renderer->addDefaultParam('zendview-layout-variable', 'title', $title);
+        $result = $renderer->render('zendview', ['name' => $name]);
+        $this->assertContains($title, $result);
+        $this->assertContains($name, $result);
+
+        $content = file_get_contents(__DIR__ . '/TestAsset/zendview.phtml');
+        $content = str_replace('<?php echo $name ?>', $name, $content);
+        $layout = file_get_contents(__DIR__ . '/TestAsset/zendview-layout-variable.phtml');
+        $layout = str_replace('<?= $this->title ?>', $title, $layout);
+        $layout = str_replace('<?= $this->content ?>' . PHP_EOL, $content, $layout);
+        $this->assertContains($layout, $result);
+
+        $expected = sprintf('<title>Layout Page: %s</title>', $title);
+        $this->assertContains($expected, $result, sprintf('Received %s', $result));
+    }
+
     /**
      * @group layout
      */
