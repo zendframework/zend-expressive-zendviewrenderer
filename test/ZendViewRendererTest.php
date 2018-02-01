@@ -246,7 +246,7 @@ class ZendViewRendererTest extends TestCase
         $this->assertContains($expected, $result, sprintf('Received %s', $result));
     }
 
-    public function testTemplateDefaultParameterIsAvailableInLayout()
+    public function testLayoutTemplateDefaultParameterIsAvailableInLayout()
     {
         $renderer = new ZendViewRenderer(null, 'zendview-layout-variable');
         $renderer->addPath(__DIR__ . '/TestAsset');
@@ -298,25 +298,24 @@ class ZendViewRendererTest extends TestCase
     {
         $renderer = new ZendViewRenderer(null);
         $renderer->addPath(__DIR__ . '/TestAsset');
-        $titleNotToBeOverriden = uniqid('ZendViewTitleNotToBeOverriden', true);
         $title = uniqid('ZendViewTitle', true);
         $name = uniqid('ZendViewName', true);
-        $renderer->addDefaultParam('zendview-layout-variable', 'title', $titleNotToBeOverriden);
+        $renderer->addDefaultParam('zendview-layout-variable', 'title', $title);
 
         $layout = new ViewModel();
         $layout->setTemplate('zendview-layout-variable');
         $result = $renderer->render('zendview', ['name' => $name, 'layout' => $layout]);
-        $this->assertContains($titleNotToBeOverriden, $result);
+        $this->assertContains($title, $result);
         $this->assertContains($name, $result);
 
         $content = file_get_contents(__DIR__ . '/TestAsset/zendview.phtml');
         $content = str_replace('<?php echo $name ?>', $name, $content);
         $layout = file_get_contents(__DIR__ . '/TestAsset/zendview-layout-variable.phtml');
-        $layout = str_replace('<?= $this->title ?>', $titleNotToBeOverriden, $layout);
+        $layout = str_replace('<?= $this->title ?>', $title, $layout);
         $layout = str_replace('<?= $this->content ?>' . PHP_EOL, $content, $layout);
         $this->assertContains($layout, $result);
 
-        $expected = sprintf('<title>Layout Page: %s</title>', $titleNotToBeOverriden);
+        $expected = sprintf('<title>Layout Page: %s</title>', $title);
         $this->assertContains($expected, $result, sprintf('Received %s', $result));
     }
 
