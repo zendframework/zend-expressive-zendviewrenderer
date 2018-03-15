@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 1.4.2 - 2018-03-15
+
+### Added
+
+- Nothing.
+
+### Changed
+
+- Nothing.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- Nothing.
+
+### Fixed
+
+- [#51](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/51)
+  fixes teh behavior of `addDefaultParam()` such that it properly affects
+  layouts as well as templates.
+
 ## 1.4.1 - 2017-12-12
 
 ### Added
