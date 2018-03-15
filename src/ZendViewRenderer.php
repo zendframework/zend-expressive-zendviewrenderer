@@ -20,6 +20,13 @@ use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Renderer\RendererInterface;
 use Zend\View\Resolver\AggregateResolver;
 
+use function get_class;
+use function gettype;
+use function is_int;
+use function is_object;
+use function is_string;
+use function sprintf;
+
 /**
  * Template implementation bridging zendframework/zend-view.
  *

@@ -17,6 +17,11 @@ use Zend\View\HelperPluginManager;
 use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Resolver;
 
+use function get_class;
+use function is_array;
+use function is_numeric;
+use function sprintf;
+
 /**
  * Create and return a ZendView template instance.
  *

@@ -19,6 +19,15 @@ use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Resolver\TemplatePathStack;
 
+use function file_get_contents;
+use function sprintf;
+use function str_replace;
+use function trim;
+use function uniqid;
+use function var_export;
+
+use const DIRECTORY_SEPARATOR;
+
 class ZendViewRendererTest extends TestCase
 {
     /**

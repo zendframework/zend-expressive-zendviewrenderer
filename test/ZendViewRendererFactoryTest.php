@@ -28,6 +28,10 @@ use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Resolver\AggregateResolver;
 use Zend\View\Resolver\TemplateMapResolver;
 
+use function sprintf;
+
+use const DIRECTORY_SEPARATOR;
+
 class ZendViewRendererFactoryTest extends TestCase
 {
     /**
