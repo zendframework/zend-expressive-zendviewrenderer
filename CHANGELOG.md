@@ -2,6 +2,62 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.0.0 - 2018-03-15
+
+### Added
+
+- [#46](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/46) and
+  [#52](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/52)
+  add support for the zend-expressive-template v2 series,
+  zend-expressive-router v3 series, and zend-expressive-helpers v5 series.
+
+- [#47](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/47)
+  adds a `ConfigProvider` class with default service wiring and configuration
+  for the component. It also updates `composer.json` to add
+  `extra.zf.config-provider` configuration to notify zend-component-installer
+  of the shipped `ConfigProvider` class, allowing the plugin to inject the
+  `ConfigProvider` in your application configuration during initial
+  installation.
+
+### Changed
+
+- [#37](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/37)
+  adds support for PSR-11. All exception types that previously extended from
+  container-interop exceptions now extend from PSR-11 exception interfaces,
+  and factories typehint against the PSR-11 `ContainerInterface`.
+
+- [#46](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/46)
+  updates all classes to use scalar and return type hints, including nullable
+  and void types. If you were extending classes from this package, you may need
+  to update signatures of methods you override.
+
+- [#45](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/45)
+  updates the `ExceptionInterface` to extend from the `ExceptionInterface`
+  provided in zend-expressive-template.
+
+### Deprecated
+
+- Nothing.
+
+### Removed
+
+- [#46](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/46)
+  removes support for PHP versions prior to PHP 7.1.
+
+- [#46](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/46)
+  removes support for zend-expressive-template versions prior to v2.
+
+- [#46](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/46)
+  removes support for zend-expressive-router versions prior to v3.
+
+- [#46](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/46)
+  removes support for zend-expressive-helpers versions prior to v5.
+
+### Fixed
+
+- [#53](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/53)
+  adds the missing default layout.
+
 ## 1.4.2 - 2018-03-15
 
 ### Added
@@ -275,7 +331,7 @@ First stable release.
 - [#11](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/11)
   adds a factory for providing the `HelperPluginManager`, and support in the
   `ZendViewRendererFactory` for injecting the `HelperPluginManager` service
-  (using its FQCN) instead of instantiating one directly. 
+  (using its FQCN) instead of instantiating one directly.
 - [#13](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/13)
   adds `zendframework/zend-expressive-helpers` as a dependency, in order to
   consume its `UrlHelper` and `ServerUrlHelper` implementations.
