@@ -1,9 +1,11 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-expressive-zendviewrenderer for the canonical source repository
- * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
+
+declare(strict_types=1);
 
 namespace Zend\Expressive\ZendView;
 
@@ -13,6 +15,26 @@ use Traversable;
 use Zend\View\Exception as ViewException;
 use Zend\View\Renderer\RendererInterface;
 use Zend\View\Resolver\TemplatePathStack;
+
+use function array_key_exists;
+use function count;
+use function file_exists;
+use function get_class;
+use function gettype;
+use function in_array;
+use function ini_get;
+use function is_array;
+use function is_object;
+use function is_string;
+use function iterator_to_array;
+use function pathinfo;
+use function preg_match;
+use function sprintf;
+use function stream_get_wrappers;
+use function stream_wrapper_register;
+use function substr;
+
+use const PATHINFO_EXTENSION;
 
 /**
  * Variant of TemplatePathStack providing namespaced paths.
@@ -27,7 +49,7 @@ use Zend\View\Resolver\TemplatePathStack;
  */
 class NamespacedPathStackResolver extends TemplatePathStack
 {
-    const DEFAULT_NAMESPACE = '__DEFAULT__';
+    public const DEFAULT_NAMESPACE = '__DEFAULT__';
 
     /**
      * @var array
@@ -39,10 +61,8 @@ class NamespacedPathStackResolver extends TemplatePathStack
      *
      * Overrides parent constructor to allow specifying paths as an associative
      * array.
-     *
-     * @param null|array|Traversable $options
      */
-    public function __construct($options = null)
+    public function __construct(iterable $options = null)
     {
         $this->useViewStream = (bool) ini_get('short_open_tag');
         if ($this->useViewStream) {
@@ -60,12 +80,10 @@ class NamespacedPathStackResolver extends TemplatePathStack
      * Add a path to the stack with the given namespace.
      *
      * @param string $path
-     * @param string $namespace
-     * @return void
      * @throws ViewException\InvalidArgumentException for an invalid path
      * @throws ViewException\InvalidArgumentException for an invalid namespace
      */
-    public function addPath($path, $namespace = self::DEFAULT_NAMESPACE)
+    public function addPath($path, ?string $namespace = self::DEFAULT_NAMESPACE) : void
     {
         if (! is_string($path)) {
             throw new ViewException\InvalidArgumentException(sprintf(
@@ -93,11 +111,8 @@ class NamespacedPathStackResolver extends TemplatePathStack
 
     /**
      * Add many paths to the stack at once.
-     *
-     * @param array $paths
-     * @return void
      */
-    public function addPaths(array $paths)
+    public function addPaths(array $paths) : void
     {
         foreach ($paths as $namespace => $path) {
             if (! is_string($namespace)) {
@@ -111,11 +126,10 @@ class NamespacedPathStackResolver extends TemplatePathStack
     /**
      * Overwrite all existing paths with the provided paths.
      *
-     * @param array|Traversable $paths
-     * @return void
+     * @param  SplStack|array $paths
      * @throws ViewException\InvalidArgumentException for invalid path types.
      */
-    public function setPaths($paths)
+    public function setPaths($paths) : void
     {
         if ($paths instanceof Traversable) {
             $paths = iterator_to_array($paths);
@@ -134,10 +148,8 @@ class NamespacedPathStackResolver extends TemplatePathStack
 
     /**
      * Clear all paths.
-     *
-     * @return void
      */
-    public function clearPaths()
+    public function clearPaths() : void
     {
         $this->paths = [];
     }
@@ -146,11 +158,9 @@ class NamespacedPathStackResolver extends TemplatePathStack
      * Retrieve the filesystem path to a view script
      *
      * @param string $name
-     * @param null|RendererInterface $renderer
-     * @return false|string
      * @throws ViewException\DomainException
      */
-    public function resolve($name, RendererInterface $renderer = null)
+    public function resolve($name, RendererInterface $renderer = null) : ?string
     {
         $namespace = self::DEFAULT_NAMESPACE;
         $template  = $name;
@@ -169,7 +179,7 @@ class NamespacedPathStackResolver extends TemplatePathStack
 
         if (! count($this->paths)) {
             $this->lastLookupFailure = static::FAILURE_NO_PATHS;
-            return false;
+            return null;
         }
 
         // Ensure we have the expected file extension
@@ -190,20 +200,18 @@ class NamespacedPathStackResolver extends TemplatePathStack
         }
 
         $this->lastLookupFailure = static::FAILURE_NOT_FOUND;
-        return false;
+        return null;
     }
 
     /**
      * Fetch a template path from a given namespace.
      *
-     * @param string $template
-     * @param string $namespace
-     * @return false|string String path on success; false on failure
+     * @return null|string String path on success; null on failure
      */
-    private function getPathFromNamespace($template, $namespace)
+    private function getPathFromNamespace(string $template, string $namespace) : ?string
     {
         if (! array_key_exists($namespace, $this->paths)) {
-            return false;
+            return null;
         }
 
         foreach ($this->paths[$namespace] as $path) {
@@ -226,6 +234,6 @@ class NamespacedPathStackResolver extends TemplatePathStack
             }
         }
 
-        return false;
+        return null;
     }
 }
