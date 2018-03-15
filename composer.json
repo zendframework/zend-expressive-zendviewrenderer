@@ -23,9 +23,9 @@
         "php": "^7.1",
         "psr/container": "^1.0",
         "psr/http-message": "^1.0.1",
-        "zendframework/zend-expressive-helpers": "^5.0.0alpha1 || ^5.0",
-        "zendframework/zend-expressive-router": "^3.0.0alpha1 || ^3.0",
-        "zendframework/zend-expressive-template": "^2.0.0alpha1 || ^2.0",
+        "zendframework/zend-expressive-helpers": "^5.0",
+        "zendframework/zend-expressive-router": "^3.0",
+        "zendframework/zend-expressive-template": "^2.0",
         "zendframework/zend-servicemanager": "^2.7.8 || ^3.3",
         "zendframework/zend-view": "^2.8.1"
     },
@@ -52,9 +52,8 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.4.x-dev",
-            "dev-develop": "1.5.x-dev",
-            "dev-release-2.0.0": "2.0.x-dev"
+            "dev-master": "2.0.x-dev",
+            "dev-develop": "2.1.x-dev"
         },
         "zf": {
             "config-provider": "Zend\\Expressive\\ZendView\\ConfigProvider"

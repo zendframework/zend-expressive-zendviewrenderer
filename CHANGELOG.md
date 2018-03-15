@@ -2,30 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.0.0alpha2 - 2018-02-07
-
-### Added
-
-- Nothing.
-
-### Changed
-
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- [#53](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/53)
-  adds the missing default layout.
-
-## 2.0.0alpha1 - 2018-02-06
+## 2.0.0 - 2018-03-15
 
 ### Added
 
@@ -78,29 +55,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Fixed
 
-- Nothing.
-
-## 1.5.0 - TBD
-
-### Added
-
-- Nothing.
-
-### Changed
-
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
+- [#53](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/53)
+  adds the missing default layout.
 
 ## 1.4.2 - 2018-03-15
 
