@@ -16,6 +16,26 @@ use Zend\View\Exception as ViewException;
 use Zend\View\Renderer\RendererInterface;
 use Zend\View\Resolver\TemplatePathStack;
 
+use function array_key_exists;
+use function count;
+use function file_exists;
+use function get_class;
+use function gettype;
+use function in_array;
+use function ini_get;
+use function is_array;
+use function is_object;
+use function is_string;
+use function iterator_to_array;
+use function pathinfo;
+use function preg_match;
+use function sprintf;
+use function stream_get_wrappers;
+use function stream_wrapper_register;
+use function substr;
+
+use const PATHINFO_EXTENSION;
+
 /**
  * Variant of TemplatePathStack providing namespaced paths.
  *
