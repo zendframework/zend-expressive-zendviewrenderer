@@ -205,6 +205,7 @@ class ZendViewRenderer implements TemplateRendererInterface
                 continue;
             }
 
+            $child  = $this->mergeViewModel($child->getTemplate(), $child);
             $result = $this->renderModel($child, $renderer);
 
             if ($child->isAppend()) {

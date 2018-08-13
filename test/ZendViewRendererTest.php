@@ -581,4 +581,29 @@ class ZendViewRendererTest extends TestCase
 
         $this->assertEquals($content, $result);
     }
+
+    public function testRenderChildWithDefaultParameter()
+    {
+        $name2 = 'Foo';
+
+        $renderer = new ZendViewRenderer();
+        $renderer->addPath(__DIR__ . '/TestAsset');
+        $renderer->addDefaultParam('zendview-2', 'name', $name2);
+
+        $viewModelChild = new ViewModel();
+        $viewModelChild->setTemplate('zendview-2');
+
+        $viewModelParent = new ViewModel();
+        $viewModelParent->addChild($viewModelChild, 'name');
+
+        $result = $renderer->render('zendview', $viewModelParent);
+
+        $contentChild = file_get_contents(__DIR__ . '/TestAsset/zendview-2.phtml');
+        $contentChild = str_replace('<?php echo $name ?>', $name2, $contentChild);
+
+        $content = file_get_contents(__DIR__ . '/TestAsset/zendview.phtml');
+        $content = str_replace('<?php echo $name ?>', $contentChild, $content);
+
+        static::assertEquals($content, $result);
+    }
 }
