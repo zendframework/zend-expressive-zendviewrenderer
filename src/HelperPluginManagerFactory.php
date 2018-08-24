@@ -20,7 +20,7 @@ class HelperPluginManagerFactory
         $manager = new HelperPluginManager($container);
 
         $config = $container->has('config') ? $container->get('config') : [];
-        $config = isset($config['view_helpers']) ? $config['view_helpers'] : [];
+        $config = $config['view_helpers'] ?? [];
 
         if (! empty($config)) {
             (new Config($config))->configureServiceManager($manager);
