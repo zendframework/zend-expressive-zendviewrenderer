@@ -193,9 +193,17 @@ class ZendViewRenderer implements TemplateRendererInterface
     /**
      * Do a recursive, depth-first rendering of a view model.
      *
-     * @throws Exception\RenderingException if it encounters a terminal child.
+     * @param ModelInterface      $model
+     * @param RendererInterface   $renderer
+     * @param ModelInterface|null $root
+     *
+     * @return string
      */
-    private function renderModel(ModelInterface $model, RendererInterface $renderer, ModelInterface $root = null) : string
+    private function renderModel(
+        ModelInterface $model,
+        RendererInterface $renderer,
+        ModelInterface $root = null
+    ) : string
     {
         if (! $root) {
             $root = $model;
