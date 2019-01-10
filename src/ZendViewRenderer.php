@@ -125,6 +125,8 @@ class ZendViewRenderer implements TemplateRendererInterface
      * the constructor.
      *
      * @param array|ModelInterface|object $params
+     *
+     * @return string
      */
     public function render(string $name, $params = []) : string
     {
@@ -191,10 +193,21 @@ class ZendViewRenderer implements TemplateRendererInterface
     /**
      * Do a recursive, depth-first rendering of a view model.
      *
-     * @throws Exception\RenderingException if it encounters a terminal child.
+     * @param ModelInterface      $model
+     * @param RendererInterface   $renderer
+     * @param ModelInterface|null $root
+     *
+     * @return string
      */
-    private function renderModel(ModelInterface $model, RendererInterface $renderer) : string
-    {
+    private function renderModel(
+        ModelInterface $model,
+        RendererInterface $renderer,
+        ModelInterface $root = null
+    ) : string {
+        if (! $root) {
+            $root = $model;
+        }
+
         foreach ($model as $child) {
             if ($child->terminate()) {
                 throw new Exception\RenderingException('Cannot render; encountered a child marked terminal');
@@ -206,6 +219,12 @@ class ZendViewRenderer implements TemplateRendererInterface
             }
 
             $child  = $this->mergeViewModel($child->getTemplate(), $child);
+
+            if ($child !== $root) {
+                $viewModelHelper = $renderer->plugin('view_model');
+                $viewModelHelper->setRoot($root);
+            }
+
             $result = $this->renderModel($child, $renderer);
 
             if ($child->isAppend()) {
