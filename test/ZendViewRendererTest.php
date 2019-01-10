@@ -612,9 +612,6 @@ class ZendViewRendererTest extends TestCase
         $renderer = new ZendViewRenderer();
         $renderer->addPath(__DIR__ . '/TestAsset');
 
-        $viewModelChild = new ViewModel();
-        $viewModelChild->setTemplate('zendview-change-layout');
-
         $result = $renderer->render('zendview-change-layout', ['layout' => 'zendview-layout']);
 
         $contentChild = file_get_contents(__DIR__ . '/TestAsset/zendview-change-layout.phtml');
