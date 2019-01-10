@@ -14,15 +14,15 @@ Install this library using composer:
 $ composer require zendframework/zend-expressive-zendviewrenderer
 ```
 
-We recommend using a dependency injection container, and typehint against
-[container-interop](https://github.com/container-interop/container-interop). We
-can recommend the following implementations:
+We recommend using [PSR-11](https://www.php-fig.org/psr/psr-11/) compatible
+dependency injection container. We can recommend the following implementations:
 
 - [zend-servicemanager](https://github.com/zendframework/zend-servicemanager):
   `composer require zendframework/zend-servicemanager`
-- [pimple-interop](https://github.com/moufmouf/pimple-interop):
-  `composer require mouf/pimple-interop`
-- [Aura.Di](https://github.com/auraphp/Aura.Di)
+- [Pimple](https://github.com/silexphp/Pimple):
+  `composer require zendframework/zend-pimple-config`
+- [Aura.Di](https://github.com/auraphp/Aura.Di):
+  `composer require zendframework/zend-auradi-config`
 
 ## View Helpers
 
