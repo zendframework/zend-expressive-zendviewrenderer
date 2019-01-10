@@ -219,7 +219,7 @@ class ZendViewRenderer implements TemplateRendererInterface
                 $viewModelHelper->setRoot($root);
             }
 
-            $result = $this->renderModel($child, $renderer);
+            $result = $this->renderModel($child, $renderer, $root);
 
             if ($child->isAppend()) {
                 $oldResult = $model->{$capture};
