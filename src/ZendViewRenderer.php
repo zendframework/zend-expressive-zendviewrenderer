@@ -203,8 +203,7 @@ class ZendViewRenderer implements TemplateRendererInterface
         ModelInterface $model,
         RendererInterface $renderer,
         ModelInterface $root = null
-    ) : string
-    {
+    ) : string {
         if (! $root) {
             $root = $model;
         }
