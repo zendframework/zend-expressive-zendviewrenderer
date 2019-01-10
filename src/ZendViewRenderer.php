@@ -197,7 +197,7 @@ class ZendViewRenderer implements TemplateRendererInterface
      */
     private function renderModel(ModelInterface $model, RendererInterface $renderer, ModelInterface $root = null) : string
     {
-        if (!$root) {
+        if (! $root) {
             $root = $model;
         }
 
