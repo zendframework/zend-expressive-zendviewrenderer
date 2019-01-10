@@ -269,11 +269,6 @@ class ZendViewRenderer implements TemplateRendererInterface
         $aggregate->attach(new NamespacedPathStackResolver(), 0);
     }
 
-    /**
-     * @param AggregateResolver $aggregate
-     *
-     * @return bool
-     */
     private function hasNamespacedResolver(AggregateResolver $aggregate) : bool
     {
         foreach ($aggregate as $resolver) {
@@ -285,11 +280,6 @@ class ZendViewRenderer implements TemplateRendererInterface
         return false;
     }
 
-    /**
-     * @param AggregateResolver $aggregate
-     *
-     * @return NamespacedPathStackResolver|null
-     */
     private function getNamespacedResolver(AggregateResolver $aggregate) : ?NamespacedPathStackResolver
     {
         foreach ($aggregate as $resolver) {
@@ -305,8 +295,6 @@ class ZendViewRenderer implements TemplateRendererInterface
      * Merge global/template parameters with provided view model.
      *
      * @param string $name Template name.
-     *
-     * @return ModelInterface
      */
     private function mergeViewModel(string $name, ModelInterface $model) : ModelInterface
     {
