@@ -125,8 +125,6 @@ class ZendViewRenderer implements TemplateRendererInterface
      * the constructor.
      *
      * @param array|ModelInterface|object $params
-     *
-     * @return string
      */
     public function render(string $name, $params = []) : string
     {
@@ -193,11 +191,7 @@ class ZendViewRenderer implements TemplateRendererInterface
     /**
      * Do a recursive, depth-first rendering of a view model.
      *
-     * @param ModelInterface      $model
-     * @param RendererInterface   $renderer
-     * @param ModelInterface|null $root
-     *
-     * @return string
+     * @throws Exception\RenderingException if it encounters a terminal child.
      */
     private function renderModel(
         ModelInterface $model,
