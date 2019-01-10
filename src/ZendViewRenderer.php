@@ -220,8 +220,10 @@ class ZendViewRenderer implements TemplateRendererInterface
 
             $child  = $this->mergeViewModel($child->getTemplate(), $child);
 
-            $viewModelHelper = $renderer->plugin('view_model');
-            $viewModelHelper->setRoot($root);
+            if ($child !== $root) {
+                $viewModelHelper = $renderer->plugin('view_model');
+                $viewModelHelper->setRoot($root);
+            }
 
             $result = $this->renderModel($child, $renderer);
 
