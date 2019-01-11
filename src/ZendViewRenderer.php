@@ -14,6 +14,7 @@ use Zend\Expressive\Template\DefaultParamsTrait;
 use Zend\Expressive\Template\Exception;
 use Zend\Expressive\Template\TemplatePath;
 use Zend\Expressive\Template\TemplateRendererInterface;
+use Zend\View\Helper;
 use Zend\View\Model\ModelInterface;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
@@ -215,7 +216,7 @@ class ZendViewRenderer implements TemplateRendererInterface
             $child  = $this->mergeViewModel($child->getTemplate(), $child);
 
             if ($child !== $root) {
-                $viewModelHelper = $renderer->plugin('view_model');
+                $viewModelHelper = $renderer->plugin(Helper\ViewModel::class);
                 $viewModelHelper->setRoot($root);
             }
 
