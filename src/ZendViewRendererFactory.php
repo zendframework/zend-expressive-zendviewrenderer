@@ -57,17 +57,17 @@ class ZendViewRendererFactory
     public function __invoke(ContainerInterface $container) : ZendViewRenderer
     {
         $config   = $container->has('config') ? $container->get('config') : [];
-        $config   = isset($config['templates']) ? $config['templates'] : [];
+        $config   = $config['templates'] ?? [];
 
         // Configuration
         $resolver = new Resolver\AggregateResolver();
         $resolver->attach(
-            new Resolver\TemplateMapResolver(isset($config['map']) ? $config['map'] : []),
+            new Resolver\TemplateMapResolver($config['map'] ?? []),
             100
         );
 
         // Create or retrieve the renderer from the container
-        $renderer = ($container->has(PhpRenderer::class))
+        $renderer = $container->has(PhpRenderer::class)
             ? $container->get(PhpRenderer::class)
             : new PhpRenderer();
         $renderer->setResolver($resolver);
@@ -76,7 +76,7 @@ class ZendViewRendererFactory
         $this->injectHelpers($renderer, $container);
 
         // Inject renderer
-        $view = new ZendViewRenderer($renderer, isset($config['layout']) ? $config['layout'] : null);
+        $view = new ZendViewRenderer($renderer, $config['layout'] ?? null);
 
         // Add template paths
         $allPaths = isset($config['paths']) && is_array($config['paths']) ? $config['paths'] : [];
