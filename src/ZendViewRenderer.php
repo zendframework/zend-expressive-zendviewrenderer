@@ -14,6 +14,7 @@ use Zend\Expressive\Template\DefaultParamsTrait;
 use Zend\Expressive\Template\Exception;
 use Zend\Expressive\Template\TemplatePath;
 use Zend\Expressive\Template\TemplateRendererInterface;
+use Zend\View\Helper;
 use Zend\View\Model\ModelInterface;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
@@ -193,8 +194,15 @@ class ZendViewRenderer implements TemplateRendererInterface
      *
      * @throws Exception\RenderingException if it encounters a terminal child.
      */
-    private function renderModel(ModelInterface $model, RendererInterface $renderer) : string
-    {
+    private function renderModel(
+        ModelInterface $model,
+        RendererInterface $renderer,
+        ModelInterface $root = null
+    ) : string {
+        if (! $root) {
+            $root = $model;
+        }
+
         foreach ($model as $child) {
             if ($child->terminate()) {
                 throw new Exception\RenderingException('Cannot render; encountered a child marked terminal');
@@ -206,7 +214,13 @@ class ZendViewRenderer implements TemplateRendererInterface
             }
 
             $child  = $this->mergeViewModel($child->getTemplate(), $child);
-            $result = $this->renderModel($child, $renderer);
+
+            if ($child !== $root) {
+                $viewModelHelper = $renderer->plugin(Helper\ViewModel::class);
+                $viewModelHelper->setRoot($root);
+            }
+
+            $result = $this->renderModel($child, $renderer, $root);
 
             if ($child->isAppend()) {
                 $oldResult = $model->{$capture};

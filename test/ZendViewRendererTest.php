@@ -606,4 +606,20 @@ class ZendViewRendererTest extends TestCase
 
         static::assertEquals($content, $result);
     }
+
+    public function testChangeLayoutInTemplate()
+    {
+        $renderer = new ZendViewRenderer();
+        $renderer->addPath(__DIR__ . '/TestAsset');
+
+        $result = $renderer->render('zendview-change-layout', ['layout' => 'zendview-layout']);
+
+        $contentChild = file_get_contents(__DIR__ . '/TestAsset/zendview-change-layout.phtml');
+        $contentChild = str_replace("<?php \$this->layout('zendview-layout2'); ?>\n", '', $contentChild);
+
+        $content = file_get_contents(__DIR__ . '/TestAsset/zendview-layout2.phtml');
+        $content = str_replace("<?= \$this->content ?>\n", $contentChild, $content);
+
+        static::assertEquals($content, $result);
+    }
 }
