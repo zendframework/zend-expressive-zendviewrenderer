@@ -38,6 +38,7 @@ class ConfigProvider
     public function getTemplates() : array
     {
         return [
+            'default_suffix' => 'phtml',
             'layout' => 'layout::default',
             'paths' => [],
         ];

@@ -22,6 +22,7 @@ use Zend\Expressive\ZendView\ServerUrlHelper;
 use Zend\Expressive\ZendView\UrlHelper;
 use Zend\Expressive\ZendView\ZendViewRenderer;
 use Zend\Expressive\ZendView\ZendViewRendererFactory;
+use Zend\Expressive\ZendView\NamespacedPathStackResolver;
 use Zend\View\HelperPluginManager;
 use Zend\View\Model\ModelInterface;
 use Zend\View\Renderer\PhpRenderer;
@@ -245,6 +246,34 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->assertEquals('bar', $resolver->get('foo'));
         $this->assertTrue($resolver->has('bar'));
         $this->assertEquals('baz', $resolver->get('bar'));
+    }
+
+    public function testConfiguresCustomDefaultSuffix()
+    {
+        $config = [
+            'templates' => [
+                'default_suffix' => 'php',
+            ],
+        ];
+
+        $this->container->has('config')->willReturn(true);
+        $this->container->get('config')->willReturn($config);
+        $this->container->has(HelperPluginManager::class)->willReturn(false);
+        $this->container->has(PhpRenderer::class)->willReturn(false);
+
+        $factory = new ZendViewRendererFactory();
+        $view = $factory($this->container->reveal());
+
+        $r = new ReflectionProperty($view, 'resolver');
+        $r->setAccessible(true);
+        $resolver  = $r->getValue($view);
+
+        // @codingStandardsIgnoreStart
+        // phpcs:disable
+        $this->assertInstanceOf(NamespacedPathStackResolver::class, $resolver, 'Expected NamespacedPathStackResolver not found!');
+        // phpcs:enable
+        // @codingStandardsIgnoreEnd
+        $this->assertEquals('php', $resolver->getDefaultSuffix());
     }
 
     public function testInjectsCustomHelpersIntoHelperManager()
