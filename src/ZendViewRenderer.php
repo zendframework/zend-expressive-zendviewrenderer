@@ -75,7 +75,7 @@ class ZendViewRenderer implements TemplateRendererInterface
      *
      * @param null|RendererInterface $renderer
      * @param null|string|ModelInterface $layout
-     * @param null|string $defaultSuffix The default template file suffux, if any
+     * @param null|string $defaultSuffix The default template file suffix, if any
      * @throws Exception\InvalidArgumentException for invalid $layout types
      */
     public function __construct(RendererInterface $renderer = null, $layout = null, string $defaultSuffix = null)
