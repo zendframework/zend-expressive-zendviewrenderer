@@ -613,7 +613,7 @@ class ZendViewRendererTest extends TestCase
         $renderer = new ZendViewRenderer(null, null, 'php');
         $renderer->addPath(__DIR__ . '/TestAsset');
         $result = $renderer->render('zendview-custom-suffix', ['name' => $name]);
-        $content = file_get_contents(__DIR__ . '/TestAsset/zendview-custom-suffix.php');
+        $content = file_get_contents(__DIR__ . '/TestAsset/zendview-custom-suffix.pht');
         $content = str_replace('<?php echo $name ?>', $name, $content);
         $this->assertEquals($content, $result);
     }
