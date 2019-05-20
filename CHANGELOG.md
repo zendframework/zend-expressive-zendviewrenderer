@@ -6,7 +6,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- [#65](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/65)
+  enables usage of any PSR-11 container with the view helper plugin manager
 
 ### Changed
 
@@ -18,7 +19,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Removed
 
-- Nothing.
+- [#65](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/65)
+  removes support for v2 releases of zendframework/zend-servicemanager
 
 ### Fixed
 
