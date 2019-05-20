@@ -9,7 +9,6 @@ declare(strict_types=1);
 
 namespace Zend\Expressive\ZendView;
 
-use Interop\Container\ContainerInterface as InteropContainerInterface;
 use Psr\Container\ContainerInterface;
 use Zend\Expressive\Helper\ServerUrlHelper as BaseServerUrlHelper;
 use Zend\Expressive\Helper\UrlHelper as BaseUrlHelper;
@@ -17,7 +16,6 @@ use Zend\View\HelperPluginManager;
 use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Resolver;
 
-use function get_class;
 use function is_array;
 use function is_numeric;
 use function sprintf;
@@ -136,26 +134,10 @@ class ZendViewRendererFactory
         $renderer->setHelperPluginManager($helpers);
     }
 
-    /**
-     * @throws Exception\InvalidContainerException if the $container argument
-     *     does not implement InteropContainerInterface.
-     */
     private function retrieveHelperManager(ContainerInterface $container) : HelperPluginManager
     {
         if ($container->has(HelperPluginManager::class)) {
             return $container->get(HelperPluginManager::class);
-        }
-
-        if (! $container instanceof InteropContainerInterface) {
-            throw new Exception\InvalidContainerException(sprintf(
-                '%s expects a %s instance to its constructor; however, your service'
-                . ' container is an instance of %s, which does not implement that'
-                . ' interface. Consider switching to zend-servicemanager for your'
-                . ' container implementation if you wish to use the zend-view renderer.',
-                HelperPluginManager::class,
-                InteropContainerInterface::class,
-                get_class($container)
-            ));
         }
 
         return new HelperPluginManager($container);
