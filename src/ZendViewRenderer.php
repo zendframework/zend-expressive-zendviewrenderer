@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-expressive-zendviewrenderer for the canonical source repository
- * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (https://www.zend.com)
+ * @copyright Copyright (c) 2015-2019 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
 
@@ -44,7 +44,7 @@ class ZendViewRenderer implements TemplateRendererInterface
     use DefaultParamsTrait;
 
     /**
-     * @var ViewModel
+     * @var null|ModelInterface
      */
     private $layout;
 
@@ -207,6 +207,7 @@ class ZendViewRenderer implements TemplateRendererInterface
             $root = $model;
         }
 
+        /** @var ModelInterface $child */
         foreach ($model as $child) {
             if ($child->terminate()) {
                 throw new Exception\RenderingException('Cannot render; encountered a child marked terminal');
@@ -219,7 +220,8 @@ class ZendViewRenderer implements TemplateRendererInterface
 
             $child  = $this->mergeViewModel($child->getTemplate(), $child);
 
-            if ($child !== $root) {
+            if ($renderer instanceof PhpRenderer && $child !== $root) {
+                /** @var Helper\ViewModel $viewModelHelper */
                 $viewModelHelper = $renderer->plugin(Helper\ViewModel::class);
                 $viewModelHelper->setRoot($root);
             }
