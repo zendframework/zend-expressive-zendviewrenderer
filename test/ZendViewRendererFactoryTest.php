@@ -22,6 +22,7 @@ use Zend\Expressive\ZendView\ServerUrlHelper;
 use Zend\Expressive\ZendView\UrlHelper;
 use Zend\Expressive\ZendView\ZendViewRenderer;
 use Zend\Expressive\ZendView\ZendViewRendererFactory;
+use Zend\Expressive\ZendView\NamespacedPathStackResolver;
 use Zend\View\HelperPluginManager;
 use Zend\View\Model\ModelInterface;
 use Zend\View\Renderer\PhpRenderer;
@@ -201,14 +202,18 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->assertPathNamespaceCount(3, null, $paths);
 
         $dirSlash = DIRECTORY_SEPARATOR;
-        // @codingStandardsIgnoreStart
-        $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/bar' . $dirSlash, 'foo', $paths, var_export($paths, true));
+
+        $this->assertPathNamespaceContains(
+            __DIR__ . '/TestAsset/bar' . $dirSlash,
+            'foo',
+            $paths,
+            var_export($paths, true)
+        );
         $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/baz' . $dirSlash, 'bar', $paths);
         $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/bat' . $dirSlash, 'bar', $paths);
         $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/one' . $dirSlash, null, $paths);
         $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/two' . $dirSlash, null, $paths);
         $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/three' . $dirSlash, null, $paths);
-        // @codingStandardsIgnoreEnd
     }
 
     public function testConfiguresTemplateMap()
@@ -245,6 +250,34 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->assertEquals('bar', $resolver->get('foo'));
         $this->assertTrue($resolver->has('bar'));
         $this->assertEquals('baz', $resolver->get('bar'));
+    }
+
+    public function testConfiguresCustomDefaultSuffix()
+    {
+        $config = [
+            'templates' => [
+                'default_suffix' => 'php',
+            ],
+        ];
+
+        $this->container->has('config')->willReturn(true);
+        $this->container->get('config')->willReturn($config);
+        $this->container->has(HelperPluginManager::class)->willReturn(false);
+        $this->container->has(PhpRenderer::class)->willReturn(false);
+
+        $factory = new ZendViewRendererFactory();
+        $view = $factory($this->container->reveal());
+
+        $r = new ReflectionProperty($view, 'resolver');
+        $r->setAccessible(true);
+        $resolver  = $r->getValue($view);
+
+        $this->assertInstanceOf(
+            NamespacedPathStackResolver::class,
+            $resolver,
+            'Expected NamespacedPathStackResolver not found!'
+        );
+        $this->assertEquals('php', $resolver->getDefaultSuffix());
     }
 
     public function testInjectsCustomHelpersIntoHelperManager()

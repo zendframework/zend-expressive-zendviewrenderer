@@ -36,6 +36,7 @@ use function sprintf;
  *
  * <code>
  * 'templates' => [
+ *     'extension' => 'default template file extension',
  *     'layout' => 'name of layout view to use, if any',
  *     'map'    => [
  *         // template => filename pairs
@@ -76,7 +77,7 @@ class ZendViewRendererFactory
         $this->injectHelpers($renderer, $container);
 
         // Inject renderer
-        $view = new ZendViewRenderer($renderer, $config['layout'] ?? null);
+        $view = new ZendViewRenderer($renderer, $config['layout'] ?? null, $config['default_suffix'] ?? null);
 
         // Add template paths
         $allPaths = isset($config['paths']) && is_array($config['paths']) ? $config['paths'] : [];
