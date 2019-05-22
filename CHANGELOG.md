@@ -6,7 +6,8 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Added
 
-- Nothing.
+- [#64](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/64)
+  adds configuration option to change default template suffix used by NamespacedPathStackResolver
 
 ### Changed
 
