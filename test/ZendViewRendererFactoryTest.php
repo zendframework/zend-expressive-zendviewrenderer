@@ -272,11 +272,11 @@ class ZendViewRendererFactoryTest extends TestCase
         $r->setAccessible(true);
         $resolver  = $r->getValue($view);
 
-        // @codingStandardsIgnoreStart
-        // phpcs:disable
-        $this->assertInstanceOf(NamespacedPathStackResolver::class, $resolver, 'Expected NamespacedPathStackResolver not found!');
-        // phpcs:enable
-        // @codingStandardsIgnoreEnd
+        $this->assertInstanceOf(
+            NamespacedPathStackResolver::class,
+            $resolver,
+            'Expected NamespacedPathStackResolver not found!'
+        );
         $this->assertEquals('php', $resolver->getDefaultSuffix());
     }
 
