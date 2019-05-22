@@ -607,7 +607,7 @@ class ZendViewRendererTest extends TestCase
         static::assertEquals($content, $result);
     }
 
-    public function testCanRenderWithCustomSuffix()
+    public function testCanRenderWithCustomDefaultSuffix()
     {
         $name = 'zend-custom-suffix';
         $suffix = 'pht';
