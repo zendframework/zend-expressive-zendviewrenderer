@@ -2,34 +2,12 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## 2.1.0 - TBD
+## 2.1.0 - 2019-05-22
 
 ### Added
 
 - [#64](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/64)
   adds configuration option to change default template suffix used by NamespacedPathStackResolver
-
-### Changed
-
-- Nothing.
-
-### Deprecated
-
-- Nothing.
-
-### Removed
-
-- Nothing.
-
-### Fixed
-
-- Nothing.
-
-## 2.0.3 - TBD
-
-### Added
-
-- Nothing.
 
 ### Changed
 
