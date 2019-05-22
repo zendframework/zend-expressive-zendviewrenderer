@@ -607,6 +607,18 @@ class ZendViewRendererTest extends TestCase
         static::assertEquals($content, $result);
     }
 
+    public function testCanRenderWithCustomDefaultSuffix()
+    {
+        $name = 'zend-custom-suffix';
+        $suffix = 'pht';
+        $renderer = new ZendViewRenderer(null, null, $suffix);
+        $renderer->addPath(__DIR__ . '/TestAsset');
+        $result = $renderer->render('zendview-custom-suffix', ['name' => $name]);
+        $content = file_get_contents(__DIR__ . '/TestAsset/zendview-custom-suffix.' . $suffix);
+        $content = str_replace('<?php echo $name ?>', $name, $content);
+        $this->assertEquals($content, $result);
+    }
+
     public function testChangeLayoutInTemplate()
     {
         $renderer = new ZendViewRenderer();
