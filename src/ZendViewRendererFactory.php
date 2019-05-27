@@ -66,6 +66,16 @@ class ZendViewRendererFactory
             100
         );
 
+        $nsPathResolver = new NamespacedPathStackResolver();
+        // Set default suffix
+        if (isset($config['extension'])) {
+            $nsPathResolver->setDefaultSuffix($config['extension']);
+        }
+        $resolver->attach(
+            $nsPathResolver,
+            0
+        );
+
         // Create or retrieve the renderer from the container
         $renderer = $container->has(PhpRenderer::class)
             ? $container->get(PhpRenderer::class)
@@ -75,9 +85,8 @@ class ZendViewRendererFactory
         // Inject helpers
         $this->injectHelpers($renderer, $container);
 
-        $defaultSuffix = $config['extension'] ?? $config['default_suffix'] ?? null;
         // Inject renderer
-        $view = new ZendViewRenderer($renderer, $config['layout'] ?? null, $defaultSuffix);
+        $view = new ZendViewRenderer($renderer, $nsPathResolver, $config['layout'] ?? null);
 
         // Add template paths
         $allPaths = isset($config['paths']) && is_array($config['paths']) ? $config['paths'] : [];
