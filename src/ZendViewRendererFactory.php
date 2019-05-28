@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-expressive-zendviewrenderer for the canonical source repository
- * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (https://www.zend.com)
+ * @copyright Copyright (c) 2015-2019 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
 
@@ -60,6 +60,7 @@ class ZendViewRendererFactory
         $config   = $container->has('config') ? $container->get('config') : [];
         $config   = $config['templates'] ?? [];
 
+
         // Configuration
         $resolver = new Resolver\AggregateResolver();
         $resolver->attach(
@@ -76,8 +77,9 @@ class ZendViewRendererFactory
         // Inject helpers
         $this->injectHelpers($renderer, $container);
 
+        $defaultSuffix = $config['extension'] ?? $config['default_suffix'] ?? null;
         // Inject renderer
-        $view = new ZendViewRenderer($renderer, $config['layout'] ?? null, $config['default_suffix'] ?? null);
+        $view = new ZendViewRenderer($renderer, $config['layout'] ?? null, $defaultSuffix);
 
         // Add template paths
         $allPaths = isset($config['paths']) && is_array($config['paths']) ? $config['paths'] : [];
