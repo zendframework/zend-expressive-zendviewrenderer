@@ -10,11 +10,15 @@ All notable changes to this project will be documented in this file, in reverse 
 
 ### Changed
 
-- Nothing.
+- [#67](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/67)
+  changes configuration option for default template suffix used by NamespacedPathStackResolver
+  to `$config['templates']['extension']` to match other template renderers provided
+  by framework. Default value is `phtml`
 
 ### Deprecated
 
-- Nothing.
+- [#67](https://github.com/zendframework/zend-expressive-zendviewrenderer/pull/67)
+  deprecates configuration option `$config['templates']['default_suffix']`
 
 ### Removed
 
