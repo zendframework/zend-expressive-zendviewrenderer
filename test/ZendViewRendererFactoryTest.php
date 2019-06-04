@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-expressive-zendviewrenderer for the canonical source repository
- * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (https://www.zend.com)
+ * @copyright Copyright (c) 2015-2019 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
 
@@ -253,6 +253,34 @@ class ZendViewRendererFactoryTest extends TestCase
     }
 
     public function testConfiguresCustomDefaultSuffix()
+    {
+        $config = [
+            'templates' => [
+                'extension' => 'php',
+            ],
+        ];
+
+        $this->container->has('config')->willReturn(true);
+        $this->container->get('config')->willReturn($config);
+        $this->container->has(HelperPluginManager::class)->willReturn(false);
+        $this->container->has(PhpRenderer::class)->willReturn(false);
+
+        $factory = new ZendViewRendererFactory();
+        $view = $factory($this->container->reveal());
+
+        $r = new ReflectionProperty($view, 'resolver');
+        $r->setAccessible(true);
+        $resolver  = $r->getValue($view);
+
+        $this->assertInstanceOf(
+            NamespacedPathStackResolver::class,
+            $resolver,
+            'Expected NamespacedPathStackResolver not found!'
+        );
+        $this->assertEquals('php', $resolver->getDefaultSuffix());
+    }
+
+    public function testConfiguresDeprecatedDefaultSuffix()
     {
         $config = [
             'templates' => [
