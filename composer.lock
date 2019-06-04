@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "63368da74dbe121a1e8264957b779e36",
+    "content-hash": "95787f67e75f1cded4d3b93c4d9e9883",
     "packages": [
         {
             "name": "container-interop/container-interop",
@@ -1670,6 +1670,7 @@
                 "mock",
                 "xunit"
             ],
+            "abandoned": true,
             "time": "2018-02-15T05:27:38+00:00"
         },
         {
