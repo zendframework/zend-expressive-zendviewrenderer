@@ -278,34 +278,6 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->assertEquals('php', $resolver->getDefaultSuffix());
     }
 
-    public function testConfiguresDeprecatedDefaultSuffix()
-    {
-        $config = [
-            'templates' => [
-                'default_suffix' => 'php',
-            ],
-        ];
-
-        $this->container->has('config')->willReturn(true);
-        $this->container->get('config')->willReturn($config);
-        $this->container->has(HelperPluginManager::class)->willReturn(false);
-        $this->container->has(PhpRenderer::class)->willReturn(false);
-
-        $factory = new ZendViewRendererFactory();
-        $view = $factory($this->container->reveal());
-
-        $r = new ReflectionProperty($view, 'resolver');
-        $r->setAccessible(true);
-        $resolver  = $r->getValue($view);
-
-        $this->assertInstanceOf(
-            NamespacedPathStackResolver::class,
-            $resolver,
-            'Expected NamespacedPathStackResolver not found!'
-        );
-        $this->assertEquals('php', $resolver->getDefaultSuffix());
-    }
-
     public function testInjectsCustomHelpersIntoHelperManager()
     {
         $this->container->has('config')->willReturn(false);
