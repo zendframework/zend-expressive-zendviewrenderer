@@ -11,6 +11,7 @@ namespace Zend\Expressive\ZendView;
 
 use Zend\Expressive\Template\TemplateRendererInterface;
 use Zend\View\HelperPluginManager;
+use Zend\View\Renderer\PhpRenderer;
 
 class ConfigProvider
 {
@@ -30,6 +31,8 @@ class ConfigProvider
             ],
             'factories' => [
                 HelperPluginManager::class => HelperPluginManagerFactory::class,
+                NamespacedPathStackResolver::class => NamespacedPathStackResolverFactory::class,
+                PhpRenderer::class => PhpRendererFactory::class,
                 ZendViewRenderer::class => ZendViewRendererFactory::class,
             ],
         ];

@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-expressive-zendviewrenderer for the canonical source repository
- * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (https://www.zend.com)
+ * @copyright Copyright (c) 2015-2019 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
 
@@ -19,7 +19,6 @@ use Zend\View\Model\ModelInterface;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
 use Zend\View\Renderer\RendererInterface;
-use Zend\View\Resolver\AggregateResolver;
 
 use function get_class;
 use function gettype;
@@ -32,11 +31,6 @@ use function sprintf;
  * Template implementation bridging zendframework/zend-view.
  *
  * This implementation provides additional capabilities.
- *
- * First, it always ensures the resolver is an AggregateResolver, pushing any
- * non-Aggregate into a new AggregateResolver instance. Additionally, it always
- * registers a NamespacedPathStackResolver at priority 0 (lower than
- * default) in the Aggregate to ensure we can add and resolve namespaced paths.
  */
 class ZendViewRenderer implements TemplateRendererInterface
 {
@@ -44,7 +38,7 @@ class ZendViewRenderer implements TemplateRendererInterface
     use DefaultParamsTrait;
 
     /**
-     * @var ViewModel
+     * @var null|ModelInterface
      */
     private $layout;
 
@@ -64,35 +58,27 @@ class ZendViewRenderer implements TemplateRendererInterface
      * Allows specifying the renderer to use (any zend-view renderer is
      * allowed), and optionally also the layout.
      *
+     * Renderer is expected to be already configured with NamespacedPathStackResolver,
+     * typically in AggregateResolver at priority 0 (lower than default), to
+     * ensure we can add and resolve namespaced paths.
+     *
      * The layout may be:
      *
      * - a string layout name
      * - a ModelInterface instance representing the layout
      *
-     * If no renderer is provided, a default PhpRenderer instance is created;
-     * omitting the layout indicates no layout should be used by default when
+     * Omitting the layout indicates no layout should be used by default when
      * rendering.
      *
-     * @param null|RendererInterface $renderer
+     * @param RendererInterface $renderer
+     * @param NamespacedPathStackResolver $resolver
      * @param null|string|ModelInterface $layout
-     * @param null|string $defaultSuffix The default template file suffix, if any
      * @throws Exception\InvalidArgumentException for invalid $layout types
      */
-    public function __construct(RendererInterface $renderer = null, $layout = null, string $defaultSuffix = null)
+    public function __construct(RendererInterface $renderer, NamespacedPathStackResolver $resolver, $layout = null)
     {
-        if (null === $renderer) {
-            $renderer = $this->createRenderer();
-            $resolver = $renderer->resolver();
-        } else {
-            $resolver = $renderer->resolver();
-            if (! $resolver instanceof AggregateResolver) {
-                $aggregate = $this->getDefaultResolver();
-                $aggregate->attach($resolver);
-                $resolver = $aggregate;
-            } elseif (! $this->hasNamespacedResolver($resolver)) {
-                $this->injectNamespacedResolver($resolver);
-            }
-        }
+        $this->renderer = $renderer;
+        $this->resolver = $resolver;
 
         if ($layout && is_string($layout)) {
             $model = new ViewModel();
@@ -108,11 +94,6 @@ class ZendViewRenderer implements TemplateRendererInterface
             ));
         }
 
-        $this->renderer = $renderer;
-        $this->resolver = $this->getNamespacedResolver($resolver);
-        if (null !== $defaultSuffix) {
-            $this->resolver->setDefaultSuffix($defaultSuffix);
-        }
         $this->layout   = $layout;
     }
 
@@ -207,6 +188,7 @@ class ZendViewRenderer implements TemplateRendererInterface
             $root = $model;
         }
 
+        /** @var ModelInterface $child */
         foreach ($model as $child) {
             if ($child->terminate()) {
                 throw new Exception\RenderingException('Cannot render; encountered a child marked terminal');
@@ -219,7 +201,8 @@ class ZendViewRenderer implements TemplateRendererInterface
 
             $child  = $this->mergeViewModel($child->getTemplate(), $child);
 
-            if ($child !== $root) {
+            if ($renderer instanceof PhpRenderer && $child !== $root) {
+                /** @var Helper\ViewModel $viewModelHelper */
                 $viewModelHelper = $renderer->plugin(Helper\ViewModel::class);
                 $viewModelHelper->setRoot($root);
             }
@@ -236,58 +219,6 @@ class ZendViewRenderer implements TemplateRendererInterface
         }
 
         return $renderer->render($model);
-    }
-
-    /**
-     * Returns a PhpRenderer object
-     */
-    private function createRenderer() : PhpRenderer
-    {
-        $renderer = new PhpRenderer();
-        $renderer->setResolver($this->getDefaultResolver());
-        return $renderer;
-    }
-
-    /**
-     * Get the default resolver
-     */
-    private function getDefaultResolver() : AggregateResolver
-    {
-        $resolver = new AggregateResolver();
-        $this->injectNamespacedResolver($resolver);
-        return $resolver;
-    }
-
-    /**
-     * Attaches a new NamespacedPathStackResolver to the AggregateResolver
-     *
-     * A priority of 0 is used, to ensure it is the last queried.
-     */
-    private function injectNamespacedResolver(AggregateResolver $aggregate) : void
-    {
-        $aggregate->attach(new NamespacedPathStackResolver(), 0);
-    }
-
-    private function hasNamespacedResolver(AggregateResolver $aggregate) : bool
-    {
-        foreach ($aggregate as $resolver) {
-            if ($resolver instanceof NamespacedPathStackResolver) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private function getNamespacedResolver(AggregateResolver $aggregate) : ?NamespacedPathStackResolver
-    {
-        foreach ($aggregate as $resolver) {
-            if ($resolver instanceof NamespacedPathStackResolver) {
-                return $resolver;
-            }
-        }
-
-        return null;
     }
 
     /**

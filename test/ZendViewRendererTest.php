@@ -1,7 +1,7 @@
 <?php
 /**
  * @see       https://github.com/zendframework/zend-expressive-zendviewrenderer for the canonical source repository
- * @copyright Copyright (c) 2015-2017 Zend Technologies USA Inc. (https://www.zend.com)
+ * @copyright Copyright (c) 2015-2019 Zend Technologies USA Inc. (https://www.zend.com)
  * @license   https://github.com/zendframework/zend-expressive-zendviewrenderer/blob/master/LICENSE.md New BSD License
  */
 
@@ -14,10 +14,10 @@ use PHPUnit\Framework\TestCase;
 use Zend\Expressive\Template\Exception\InvalidArgumentException;
 use Zend\Expressive\Template\TemplatePath;
 use Zend\Expressive\Template\TemplateRendererInterface;
+use Zend\Expressive\ZendView\NamespacedPathStackResolver;
 use Zend\Expressive\ZendView\ZendViewRenderer;
 use Zend\View\Model\ViewModel;
 use Zend\View\Renderer\PhpRenderer;
-use Zend\View\Resolver\TemplatePathStack;
 
 use function file_get_contents;
 use function sprintf;
@@ -28,23 +28,26 @@ use function var_export;
 
 use const DIRECTORY_SEPARATOR;
 
+/**
+ * @covers \Zend\Expressive\ZendView\ZendViewRenderer
+ */
 class ZendViewRendererTest extends TestCase
 {
     /**
-     * @var TemplatePathStack
+     * @var NamespacedPathStackResolver
     */
     private $resolver;
 
     /**
      * @var PhpRenderer
      */
-    private $render;
+    private $renderer;
 
     public function setUp()
     {
-        $this->resolver = new TemplatePathStack();
-        $this->render = new PhpRenderer();
-        $this->render->setResolver($this->resolver);
+        $this->resolver = new NamespacedPathStackResolver();
+        $this->renderer = new PhpRenderer();
+        $this->renderer->setResolver($this->resolver);
     }
 
     public function assertTemplatePath($path, TemplatePath $templatePath, $message = null)
@@ -82,33 +85,19 @@ class ZendViewRendererTest extends TestCase
         }
     }
 
-    public function testCanPassRendererToConstructor()
-    {
-        $renderer = new ZendViewRenderer($this->render);
-        $this->assertInstanceOf(ZendViewRenderer::class, $renderer);
-        $this->assertAttributeSame($this->render, 'renderer', $renderer);
-    }
-
-    public function testInstantiatingWithoutEngineLazyLoadsOne()
-    {
-        $renderer = new ZendViewRenderer();
-        $this->assertInstanceOf(ZendViewRenderer::class, $renderer);
-        $this->assertAttributeInstanceOf(PhpRenderer::class, 'renderer', $renderer);
-    }
-
     public function testInstantiatingWithInvalidLayout()
     {
         $this->expectException(InvalidArgumentException::class);
 
-        new ZendViewRenderer(null, []);
+        new ZendViewRenderer($this->renderer, $this->resolver, []);
     }
 
     public function testCanAddPathWithEmptyNamespace()
     {
-        $renderer = new ZendViewRenderer();
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver);
         $renderer->addPath(__DIR__ . '/TestAsset');
         $paths = $renderer->getPaths();
-        $this->assertInternalType('array', $paths);
+        $this->assertIsArray($paths);
         $this->assertCount(1, $paths);
         $this->assertTemplatePath(__DIR__ . '/TestAsset' . DIRECTORY_SEPARATOR, $paths[0]);
         $this->assertTemplatePathString(__DIR__ . '/TestAsset' . DIRECTORY_SEPARATOR, $paths[0]);
@@ -117,10 +106,10 @@ class ZendViewRendererTest extends TestCase
 
     public function testCanAddPathWithNamespace()
     {
-        $renderer = new ZendViewRenderer();
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver);
         $renderer->addPath(__DIR__ . '/TestAsset', 'test');
         $paths = $renderer->getPaths();
-        $this->assertInternalType('array', $paths);
+        $this->assertIsArray($paths);
         $this->assertCount(1, $paths);
         $this->assertTemplatePath(__DIR__ . '/TestAsset' . DIRECTORY_SEPARATOR, $paths[0]);
         $this->assertTemplatePathString(__DIR__ . '/TestAsset' . DIRECTORY_SEPARATOR, $paths[0]);
@@ -129,7 +118,7 @@ class ZendViewRendererTest extends TestCase
 
     public function testDelegatesRenderingToUnderlyingImplementation()
     {
-        $renderer = new ZendViewRenderer();
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver);
         $renderer->addPath(__DIR__ . '/TestAsset');
         $name = 'zendview';
         $result = $renderer->render('zendview', [ 'name' => $name ]);
@@ -159,7 +148,7 @@ class ZendViewRendererTest extends TestCase
      */
     public function testRenderRaisesExceptionForInvalidParameterTypes($params)
     {
-        $renderer = new ZendViewRenderer();
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver);
         $this->expectException(InvalidArgumentException::class);
 
         $renderer->render('foo', $params);
@@ -167,7 +156,7 @@ class ZendViewRendererTest extends TestCase
 
     public function testCanRenderWithNullParams()
     {
-        $renderer = new ZendViewRenderer();
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver);
         $renderer->addPath(__DIR__ . '/TestAsset');
         $result = $renderer->render('zendview-null', null);
         $content = file_get_contents(__DIR__ . '/TestAsset/zendview-null.phtml');
@@ -195,7 +184,7 @@ class ZendViewRendererTest extends TestCase
      */
     public function testCanRenderWithParameterObjects($params, $search)
     {
-        $renderer = new ZendViewRenderer();
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver);
         $renderer->addPath(__DIR__ . '/TestAsset');
         $result = $renderer->render('zendview', $params);
         $this->assertContains($search, $result);
@@ -209,7 +198,7 @@ class ZendViewRendererTest extends TestCase
      */
     public function testWillRenderContentInLayoutPassedToConstructor()
     {
-        $renderer = new ZendViewRenderer(null, 'zendview-layout');
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver, 'zendview-layout');
         $renderer->addPath(__DIR__ . '/TestAsset');
         $name = 'zendview';
         $result = $renderer->render('zendview', [ 'name' => $name ]);
@@ -222,7 +211,7 @@ class ZendViewRendererTest extends TestCase
 
     public function testSharedParameterIsAvailableInLayout()
     {
-        $renderer = new ZendViewRenderer(null, 'zendview-layout-variable');
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver, 'zendview-layout-variable');
         $renderer->addPath(__DIR__ . '/TestAsset');
         $title = uniqid('ZendViewTitle', true);
         $renderer->addDefaultParam($renderer::TEMPLATE_ALL, 'title', $title);
@@ -241,7 +230,7 @@ class ZendViewRendererTest extends TestCase
 
     public function testTemplateDefaultParameterIsNotAvailableInLayout()
     {
-        $renderer = new ZendViewRenderer(null, 'zendview-layout-variable');
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver, 'zendview-layout-variable');
         $renderer->addPath(__DIR__ . '/TestAsset');
         $title = uniqid('ZendViewTitle', true);
         $renderer->addDefaultParam('zendview', 'title', $title);
@@ -260,7 +249,7 @@ class ZendViewRendererTest extends TestCase
 
     public function testLayoutTemplateDefaultParameterIsAvailableInLayout()
     {
-        $renderer = new ZendViewRenderer(null, 'zendview-layout-variable');
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver, 'zendview-layout-variable');
         $renderer->addPath(__DIR__ . '/TestAsset');
         $title = uniqid('ZendViewTitle', true);
         $name = uniqid('ZendViewName', true);
@@ -282,7 +271,7 @@ class ZendViewRendererTest extends TestCase
 
     public function testVariableInProvidedLayoutViewModelOverridesTemplateDefaultParameter()
     {
-        $renderer = new ZendViewRenderer(null);
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver);
         $renderer->addPath(__DIR__ . '/TestAsset');
         $titleToBeOverriden = uniqid('ZendViewTitleToBeOverriden', true);
         $title = uniqid('ZendViewTitle', true);
@@ -308,7 +297,7 @@ class ZendViewRendererTest extends TestCase
 
     public function testTemplateDefaultParameterIsAvailableInLayoutProvidedWithViewModel()
     {
-        $renderer = new ZendViewRenderer(null);
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver);
         $renderer->addPath(__DIR__ . '/TestAsset');
         $title = uniqid('ZendViewTitle', true);
         $name = uniqid('ZendViewName', true);
@@ -336,7 +325,7 @@ class ZendViewRendererTest extends TestCase
      */
     public function testWillRenderContentInLayoutPassedDuringRendering()
     {
-        $renderer = new ZendViewRenderer(null);
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver);
         $renderer->addPath(__DIR__ . '/TestAsset');
         $name = 'zendview';
         $result = $renderer->render('zendview', [ 'name' => $name, 'layout' => 'zendview-layout' ]);
@@ -353,7 +342,7 @@ class ZendViewRendererTest extends TestCase
      */
     public function testLayoutPassedWhenRenderingOverridesLayoutPassedToConstructor()
     {
-        $renderer = new ZendViewRenderer(null, 'zendview-layout');
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver, 'zendview-layout');
         $renderer->addPath(__DIR__ . '/TestAsset');
         $name = 'zendview';
         $result = $renderer->render('zendview', [ 'name' => $name, 'layout' => 'zendview-layout2' ]);
@@ -373,7 +362,7 @@ class ZendViewRendererTest extends TestCase
         $layout = new ViewModel();
         $layout->setTemplate('zendview-layout');
 
-        $renderer = new ZendViewRenderer(null, $layout);
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver, $layout);
         $renderer->addPath(__DIR__ . '/TestAsset');
         $name = 'zendview';
         $result = $renderer->render('zendview', [ 'name' => $name ]);
@@ -392,7 +381,7 @@ class ZendViewRendererTest extends TestCase
         $layout = new ViewModel();
         $layout->setTemplate('zendview-layout2');
 
-        $renderer = new ZendViewRenderer(null, 'zendview-layout');
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver, 'zendview-layout');
         $renderer->addPath(__DIR__ . '/TestAsset');
         $name = 'zendview';
         $result = $renderer->render('zendview', [ 'name' => $name, 'layout' => $layout ]);
@@ -411,7 +400,7 @@ class ZendViewRendererTest extends TestCase
         $layout = new ViewModel();
         $layout->setTemplate('zendview-layout');
 
-        $renderer = new ZendViewRenderer(null, $layout);
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver, $layout);
         $renderer->addPath(__DIR__ . '/TestAsset');
 
         $name = 'zendview';
@@ -434,7 +423,7 @@ class ZendViewRendererTest extends TestCase
         $layout = new ViewModel();
         $layout->setTemplate('zendview-layout');
 
-        $renderer = new ZendViewRenderer(null, $layout);
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver, $layout);
         $renderer->addPath(__DIR__ . '/TestAsset');
         $renderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'layout', false);
 
@@ -453,7 +442,7 @@ class ZendViewRendererTest extends TestCase
      */
     public function testProperlyResolvesNamespacedTemplate()
     {
-        $renderer = new ZendViewRenderer();
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver);
         $renderer->addPath(__DIR__ . '/TestAsset/test', 'test');
 
         $expected = file_get_contents(__DIR__ . '/TestAsset/test/test.phtml');
@@ -464,7 +453,7 @@ class ZendViewRendererTest extends TestCase
 
     public function testAddParameterToOneTemplate()
     {
-        $renderer = new ZendViewRenderer();
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver);
         $renderer->addPath(__DIR__ . '/TestAsset');
         $name = 'ZendView';
         $renderer->addDefaultParam('zendview', 'name', $name);
@@ -477,7 +466,7 @@ class ZendViewRendererTest extends TestCase
 
     public function testAddSharedParameters()
     {
-        $renderer = new ZendViewRenderer();
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver);
         $renderer->addPath(__DIR__ . '/TestAsset');
         $name = 'ZendView';
         $renderer->addDefaultParam($renderer::TEMPLATE_ALL, 'name', $name);
@@ -494,7 +483,7 @@ class ZendViewRendererTest extends TestCase
 
     public function testOverrideSharedParametersPerTemplate()
     {
-        $renderer = new ZendViewRenderer();
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver);
         $renderer->addPath(__DIR__ . '/TestAsset');
         $name = 'Zend';
         $name2 = 'View';
@@ -526,7 +515,7 @@ class ZendViewRendererTest extends TestCase
      */
     public function testOverrideSharedParametersAtRender($viewAsModel)
     {
-        $renderer = new ZendViewRenderer();
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver);
         $renderer->addPath(__DIR__ . '/TestAsset');
         $name = 'Zend';
         $name2 = 'View';
@@ -543,7 +532,7 @@ class ZendViewRendererTest extends TestCase
 
     public function testWillRenderAViewModel()
     {
-        $renderer = new ZendViewRenderer();
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver);
         $renderer->addPath(__DIR__ . '/TestAsset');
 
         $viewModel = new ViewModel(['name' => 'Zend']);
@@ -557,7 +546,7 @@ class ZendViewRendererTest extends TestCase
     public function testCanRenderWithChildViewModel()
     {
         $path = __DIR__ . '/TestAsset';
-        $renderer = new ZendViewRenderer();
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver);
         $renderer->addPath($path);
 
         $viewModelChild = new ViewModel();
@@ -586,7 +575,7 @@ class ZendViewRendererTest extends TestCase
     {
         $name2 = 'Foo';
 
-        $renderer = new ZendViewRenderer();
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver);
         $renderer->addPath(__DIR__ . '/TestAsset');
         $renderer->addDefaultParam('zendview-2', 'name', $name2);
 
@@ -607,21 +596,9 @@ class ZendViewRendererTest extends TestCase
         static::assertEquals($content, $result);
     }
 
-    public function testCanRenderWithCustomDefaultSuffix()
-    {
-        $name = 'zend-custom-suffix';
-        $suffix = 'pht';
-        $renderer = new ZendViewRenderer(null, null, $suffix);
-        $renderer->addPath(__DIR__ . '/TestAsset');
-        $result = $renderer->render('zendview-custom-suffix', ['name' => $name]);
-        $content = file_get_contents(__DIR__ . '/TestAsset/zendview-custom-suffix.' . $suffix);
-        $content = str_replace('<?php echo $name ?>', $name, $content);
-        $this->assertEquals($content, $result);
-    }
-
     public function testChangeLayoutInTemplate()
     {
-        $renderer = new ZendViewRenderer();
+        $renderer = new ZendViewRenderer($this->renderer, $this->resolver);
         $renderer->addPath(__DIR__ . '/TestAsset');
 
         $result = $renderer->render('zendview-change-layout', ['layout' => 'zendview-layout']);
