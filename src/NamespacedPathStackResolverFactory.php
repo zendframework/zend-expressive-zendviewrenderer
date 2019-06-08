@@ -11,7 +11,7 @@ namespace Zend\Expressive\ZendView;
 
 use Psr\Container\ContainerInterface;
 
-class NamespacedPathStackResolverFactory
+final class NamespacedPathStackResolverFactory
 {
     public function __invoke(ContainerInterface $container) : NamespacedPathStackResolver
     {
@@ -19,8 +19,8 @@ class NamespacedPathStackResolverFactory
         $config   = $config['templates'] ?? [];
 
         $resolver = new NamespacedPathStackResolver();
-        if (! empty($config['default_suffix'])) {
-            $resolver->setDefaultSuffix($config['default_suffix']);
+        if (! empty($config['extension'])) {
+            $resolver->setDefaultSuffix($config['extension']);
         }
 
         return $resolver;

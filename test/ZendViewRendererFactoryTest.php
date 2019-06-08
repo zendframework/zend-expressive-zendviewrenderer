@@ -14,18 +14,12 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
 use Prophecy\Prophecy\ProphecyInterface;
 use ReflectionProperty;
-use Zend\Expressive\Helper;
 use Zend\Expressive\Template\TemplatePath;
-use Zend\Expressive\ZendView\ServerUrlHelper;
-use Zend\Expressive\ZendView\UrlHelper;
 use Zend\Expressive\ZendView\ZendViewRenderer;
 use Zend\Expressive\ZendView\ZendViewRendererFactory;
 use Zend\Expressive\ZendView\NamespacedPathStackResolver;
-use Zend\View\HelperPluginManager;
 use Zend\View\Model\ModelInterface;
 use Zend\View\Renderer\PhpRenderer;
-use Zend\View\Resolver\AggregateResolver;
-use Zend\View\Resolver\TemplateMapResolver;
 
 use function sprintf;
 
@@ -41,6 +35,12 @@ class ZendViewRendererFactoryTest extends TestCase
     public function setUp()
     {
         $this->container = $this->prophesize(ContainerInterface::class);
+
+        $nsResolver = new NamespacedPathStackResolver();
+        $phpRenderer = new PhpRenderer();
+        $phpRenderer->setResolver($nsResolver);
+        $this->injectContainerService(PhpRenderer::class, $phpRenderer);
+        $this->injectContainerService(NamespacedPathStackResolver::class, $nsResolver);
     }
 
     public function getConfigurationPaths()
@@ -102,13 +102,6 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->assertContains($expected, $found, $message);
     }
 
-    public function fetchPhpRenderer(ZendViewRenderer $view)
-    {
-        $r = new ReflectionProperty($view, 'renderer');
-        $r->setAccessible(true);
-        return $r->getValue($view);
-    }
-
     public function injectContainerService($name, $service)
     {
         $this->container->has($name)->willReturn(true);
@@ -117,24 +110,9 @@ class ZendViewRendererFactoryTest extends TestCase
         );
     }
 
-    public function injectBaseHelpers()
-    {
-        $this->injectContainerService(
-            Helper\UrlHelper::class,
-            $this->prophesize(Helper\UrlHelper::class)
-        );
-        $this->injectContainerService(
-            Helper\ServerUrlHelper::class,
-            $this->prophesize(Helper\ServerUrlHelper::class)
-        );
-    }
-
     public function testCallingFactoryWithNoConfigReturnsZendViewInstance()
     {
         $this->container->has('config')->willReturn(false);
-        $this->container->has(HelperPluginManager::class)->willReturn(false);
-        $this->container->has(PhpRenderer::class)->willReturn(false);
-        $this->injectBaseHelpers();
         $factory = new ZendViewRendererFactory();
         $view    = $factory($this->container->reveal());
         $this->assertInstanceOf(ZendViewRenderer::class, $view);
@@ -160,11 +138,7 @@ class ZendViewRendererFactoryTest extends TestCase
                 'layout' => 'layout/layout',
             ],
         ];
-        $this->container->has('config')->willReturn(true);
-        $this->container->get('config')->willReturn($config);
-        $this->container->has(HelperPluginManager::class)->willReturn(false);
-        $this->container->has(PhpRenderer::class)->willReturn(false);
-        $this->injectBaseHelpers();
+        $this->injectContainerService('config', $config);
         $factory = new ZendViewRendererFactory();
         $view = $factory($this->container->reveal());
 
@@ -182,11 +156,7 @@ class ZendViewRendererFactoryTest extends TestCase
                 'paths' => $this->getConfigurationPaths(),
             ],
         ];
-        $this->container->has('config')->willReturn(true);
-        $this->container->get('config')->willReturn($config);
-        $this->container->has(HelperPluginManager::class)->willReturn(false);
-        $this->container->has(PhpRenderer::class)->willReturn(false);
-        $this->injectBaseHelpers();
+        $this->injectContainerService('config', $config);
         $factory = new ZendViewRendererFactory();
         $view = $factory($this->container->reveal());
 
@@ -214,131 +184,33 @@ class ZendViewRendererFactoryTest extends TestCase
         $this->assertPathNamespaceContains(__DIR__ . '/TestAsset/three' . $dirSlash, null, $paths);
     }
 
-    public function testConfiguresTemplateMap()
+    public function testWillUseRendererFromContainer()
     {
-        $config = [
-            'templates' => [
-                'map' => [
-                    'foo' => 'bar',
-                    'bar' => 'baz',
-                ],
-            ],
-        ];
-        $this->container->has('config')->willReturn(true);
-        $this->container->get('config')->willReturn($config);
-        $this->container->has(HelperPluginManager::class)->willReturn(false);
-        $this->container->has(PhpRenderer::class)->willReturn(false);
-        $this->injectBaseHelpers();
+        $engine = new PhpRenderer;
+        $this->container->has('config')->willReturn(false);
+        $this->injectContainerService(PhpRenderer::class, $engine);
+
         $factory = new ZendViewRendererFactory();
         $view = $factory($this->container->reveal());
 
         $r = new ReflectionProperty($view, 'renderer');
         $r->setAccessible(true);
-        $renderer  = $r->getValue($view);
-        $aggregate = $renderer->resolver();
-        $this->assertInstanceOf(AggregateResolver::class, $aggregate);
-        $resolver = false;
-        foreach ($aggregate as $resolver) {
-            if ($resolver instanceof TemplateMapResolver) {
-                break;
-            }
-        }
-        $this->assertInstanceOf(TemplateMapResolver::class, $resolver, 'Expected TemplateMapResolver not found!');
-        $this->assertTrue($resolver->has('foo'));
-        $this->assertEquals('bar', $resolver->get('foo'));
-        $this->assertTrue($resolver->has('bar'));
-        $this->assertEquals('baz', $resolver->get('bar'));
+        $composed = $r->getValue($view);
+        $this->assertSame($engine, $composed);
     }
 
-    public function testConfiguresCustomDefaultSuffix()
+    public function testWillUseNamespacedPathStackResolverFromContainer()
     {
-        $config = [
-            'templates' => [
-                'extension' => 'php',
-            ],
-        ];
-
-        $this->container->has('config')->willReturn(true);
-        $this->container->get('config')->willReturn($config);
-        $this->container->has(HelperPluginManager::class)->willReturn(false);
-        $this->container->has(PhpRenderer::class)->willReturn(false);
+        $this->container->has('config')->willReturn(false);
+        $nsResolver = new NamespacedPathStackResolver();
+        $this->injectContainerService(NamespacedPathStackResolver::class, $nsResolver);
 
         $factory = new ZendViewRendererFactory();
         $view = $factory($this->container->reveal());
 
         $r = new ReflectionProperty($view, 'resolver');
         $r->setAccessible(true);
-        $resolver  = $r->getValue($view);
-
-        $this->assertInstanceOf(
-            NamespacedPathStackResolver::class,
-            $resolver,
-            'Expected NamespacedPathStackResolver not found!'
-        );
-        $this->assertEquals('php', $resolver->getDefaultSuffix());
-    }
-
-    public function testInjectsCustomHelpersIntoHelperManager()
-    {
-        $this->container->has('config')->willReturn(false);
-        $this->container->has(HelperPluginManager::class)->willReturn(false);
-        $this->container->has(PhpRenderer::class)->willReturn(false);
-        $this->injectBaseHelpers();
-        $factory = new ZendViewRendererFactory();
-        $view    = $factory($this->container->reveal());
-        $this->assertInstanceOf(ZendViewRenderer::class, $view);
-
-        $renderer = $this->fetchPhpRenderer($view);
-        $helpers  = $renderer->getHelperPluginManager();
-        $this->assertInstanceOf(HelperPluginManager::class, $helpers);
-        $this->assertTrue($helpers->has('url'));
-        $this->assertTrue($helpers->has('serverurl'));
-        $this->assertInstanceOf(UrlHelper::class, $helpers->get('url'));
-        $this->assertInstanceOf(ServerUrlHelper::class, $helpers->get('serverurl'));
-    }
-
-    public function testWillUseHelperManagerFromContainer()
-    {
-        $this->container->has('config')->willReturn(false);
-        $this->container->has(PhpRenderer::class)->willReturn(false);
-        $this->injectBaseHelpers();
-
-        $helpers = new HelperPluginManager($this->container->reveal());
-        $this->container->has(HelperPluginManager::class)->willReturn(true);
-        $this->container->get(HelperPluginManager::class)->willReturn($helpers);
-        $factory = new ZendViewRendererFactory();
-        $view    = $factory($this->container->reveal());
-        $this->assertInstanceOf(ZendViewRenderer::class, $view);
-
-        $renderer = $this->fetchPhpRenderer($view);
-        $this->assertSame($helpers, $renderer->getHelperPluginManager());
-        return $helpers;
-    }
-
-    /**
-     * @depends testWillUseHelperManagerFromContainer
-     *
-     * @param HelperPluginManager $helpers
-     */
-    public function testInjectsCustomHelpersIntoHelperManagerFromContainer(HelperPluginManager $helpers)
-    {
-        $this->assertTrue($helpers->has('url'));
-        $this->assertTrue($helpers->has('serverurl'));
-        $this->assertInstanceOf(UrlHelper::class, $helpers->get('url'));
-        $this->assertInstanceOf(ServerUrlHelper::class, $helpers->get('serverurl'));
-    }
-
-    public function testWillUseRendererFromContainer()
-    {
-        $engine = new PhpRenderer;
-        $this->container->has('config')->willReturn(false);
-        $this->container->has(HelperPluginManager::class)->willReturn(false);
-        $this->injectContainerService(PhpRenderer::class, $engine);
-
-        $factory = new ZendViewRendererFactory();
-        $view = $factory($this->container->reveal());
-
-        $composed = $this->fetchPhpRenderer($view);
-        $this->assertSame($engine, $composed);
+        $composed = $r->getValue($view);
+        $this->assertSame($nsResolver, $composed);
     }
 }
