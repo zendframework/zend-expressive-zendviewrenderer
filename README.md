@@ -1,5 +1,9 @@
 # zend-view PhpRenderer Integration for Expressive
 
+> ## Repository abandoned 2019-12-31
+>
+> This repository has moved to mezzio/mezzio-laminasviewrenderer.
+
 [![Build Status](https://secure.travis-ci.org/zendframework/zend-expressive-zendviewrenderer.svg?branch=master)](https://secure.travis-ci.org/zendframework/zend-expressive-zendviewrenderer)
 [![Coverage Status](https://coveralls.io/repos/github/zendframework/zend-expressive-zendviewrenderer/badge.svg?branch=master)](https://coveralls.io/github/zendframework/zend-expressive-zendviewrenderer?branch=master)
 
